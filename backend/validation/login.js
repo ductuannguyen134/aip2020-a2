@@ -6,18 +6,18 @@ module.exports = validateLoginInput = (data) => {
 
   let { userName, password } = data;
 
-  //converting empty feilds to empty string for validations functions to work
+  // Convert empty fields to empty string for validating 
   userName = !isEmpty(userName) ? userName : '';
   password = !isEmpty(password) ? password : '';
 
   if (Validator.isEmpty(userName)) {
-    errros.userName = 'User Name is required';
+    errors.userName = 'Username is required';
   }
 
   if (Validator.isEmpty(password)) {
-    errros.password = 'Password is required';
+    errors.password = 'Password is required';
   } else if (!Validator.isLength(password, { min: 6, max: 30 })) {
-    errros.password = 'Password must be at least 6 characters';
+    errors.password = 'Password must be at least 6 characters';
   }
 
   return {

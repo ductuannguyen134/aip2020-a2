@@ -15,10 +15,10 @@ router.post('/signup', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ $or: [{ userName }] }).then((user) => {
+  User.findOne({ userName }).then((user) => {
     if (user) {
       if (user.userName === userName) {
-        return res.status.json({ userName: 'Username is already taken' });
+        return res.status(400).json({ userName: 'Username ' + user.userName + ' is already taken' });
       }
     } else {
       const newUser = new User({userName, password});
@@ -31,7 +31,7 @@ router.post('/signup', (req, res) => {
           newUser
             .save()
             .then((user) => res.json(user))
-            .catch((err) => console.log({ err: 'Cannot creating new user' }));
+            .catch((err) => console.log({ error: 'Cannot creating new user' }));
         });
       });
     }
@@ -64,7 +64,7 @@ router.post('/login', (req, res) => {
           });
         });
       } else {
-        return res.status(400).json({ password: 'Password Incorrected' });
+        return res.status(400).json({ password: 'Password Incorrect' });
       }
     });
   });
