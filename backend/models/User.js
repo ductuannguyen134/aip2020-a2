@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const userModel = {
   userID: {
     type: Schema.Types.ObjectId,
-    required: true,
   },
   userName: {
     type: String,
@@ -15,10 +14,12 @@ const userModel = {
     required: true,
   },
   numOfDebts: {
-    type: Int16Array,
+    type: Number,
+    default: 0,
   },
   numOfCompletedRequests: {
-    type: Int16Array,
+    type: Number,
+    default: 0,
   }
 };
 
