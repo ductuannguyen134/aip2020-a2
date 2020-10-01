@@ -8,7 +8,7 @@ router.get(
   '/',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Request.find({ author: req.user.user_name })
+    Request.find({ user: req.user.user_name })
       .then((requests) => res.status(200).json(requests))
       .catch((err) =>
         res.status(400).json({ user: 'Error fetching requests of logged in user!' })

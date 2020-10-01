@@ -6,6 +6,7 @@ const passport = require("passport");
 const path = require("path");
 const user = require("./routes/api/user");
 const request = require("./routes/api/request");
+// const favor = require("./routes/api/favor");
 
 const app = express();
 
@@ -16,9 +17,9 @@ app.use(bodyParser.json());
 // db configuration
 const DB_URL = process.env.DATABASE_URL;
 mongoose
-   .connect(DATABASE_URL, { useNewUrlParser: true })
-   .then(() => console.log("Database Connected successful"))
-   .catch(err => console.log("err"));
+   .connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+   .then(() => console.log("Database connected successful"))
+   .catch(err => console.log(err));
 
 mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
@@ -27,6 +28,7 @@ app.use(passport.initialize());
 require("./middleware/passport")(passport);
 app.use("/api/user", user);
 app.use("/api/request/", request);
+// app.use("api/favor/", favor);
 
 if (process.env.NODE_ENV === "production") {
    app.use(express.static("client/build"));

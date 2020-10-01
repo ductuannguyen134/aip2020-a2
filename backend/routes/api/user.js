@@ -10,7 +10,7 @@ const User = require('../../models/User');
 // Signup Route
 router.post('/signup', (req, res) => {
   const { errors, isValid } = validateSignupInput(req.body);
-  const { userID, userName, password, numOfDebts, numOfCompletedRequests} = req.body;
+  const { userName, password } = req.body;
   if (!isValid) {
     return res.status(400).json(errors);
   }
@@ -21,8 +21,7 @@ router.post('/signup', (req, res) => {
         return res.status.json({ userName: 'Username is already taken' });
       }
     } else {
-      numOfDebts, numOfCompletedRequests = 0;
-      const newUser = new User({ userID, userName, password, numOfDebts, numOfCompletedRequests});
+      const newUser = new User({userName, password});
 
       //Hashing password before storing in database
       bcrypt.genSalt(10, (err, salt) => {
@@ -40,19 +39,19 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { errors, isValid } = validateSignupInput(req.body);
+  const { errors, isValid } = validateLoginInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
   }
   const { userName, password } = req.body;
   User.findOne({ userName }).then((user) => {
     if (!user) {
-      return res.status(404).json({ UserName: 'User name not found' });
+      return res.status(404).json({ userName: 'User name not found' });
     }
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
         const payload = {
-          id: user.id,
+          // id: user.userID,
           userName: user.userName,
         };
         jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
