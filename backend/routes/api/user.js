@@ -31,7 +31,7 @@ router.post('/signup', (req, res) => {
           newUser
             .save()
             .then((user) => res.json(user))
-            .catch((err) => console.log({ error: 'Cannot creating new user' }));
+            .catch((err) => console.log({ error: 'Cannot create new user' }));
         });
       });
     }
@@ -46,7 +46,7 @@ router.post('/login', (req, res) => {
   const { userName, password } = req.body;
   User.findOne({ userName }).then((user) => {
     if (!user) {
-      return res.status(404).json({ userName: 'User name not found' });
+      return res.status(404).json({ userName: 'Username not found!' });
     }
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
@@ -61,10 +61,11 @@ router.post('/login', (req, res) => {
           return res.json({
             success: true,
             token: 'Bearer ' + token,
+            userName: user.userName,
           });
         });
       } else {
-        return res.status(400).json({ password: 'Password Incorrect' });
+        return res.status(400).json({ password: 'Incorrect Password!' });
       }
     });
   });
