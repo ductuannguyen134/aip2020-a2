@@ -32,7 +32,7 @@ function Login() {
                 setMessage("Successfully logged In!");
                 history.push("/");
             }).catch((error)=>{
-                setMessage(error.response.data.userName);
+                setMessage(error.response.data.password);;
             })
         }
     }
