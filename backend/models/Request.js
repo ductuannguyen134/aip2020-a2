@@ -5,7 +5,6 @@ const Schema = mongoose.Schema;
 const requestModel = {
   requestID: {
     type: Schema.Types.ObjectId,
-    required: true,
   },
   requestContent: {
     type: String,

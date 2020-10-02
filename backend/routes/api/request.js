@@ -4,10 +4,7 @@ const Request = require('../../models/Request');
 const passport = require('passport');
 const validateRequestInput = require('../../validation/request');
 
-router.get(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
+router.get('/', (req, res) => {
     Request.find({ user: req.user.user_name })
       .then((requests) => res.status(200).json(requests))
       .catch((err) =>
@@ -38,7 +35,7 @@ router.post(
   (req, res) => {
     const user = req.user.user_name;
     const request = req.body;
-    const { errors, isValid } = validatePostInput(request);
+    const { errors, isValid } = validateRequestInput(request);
     if (!isValid) {
       return res.status(400).json(errors);
     }
@@ -47,7 +44,7 @@ router.post(
     newRequest
       .save()
       .then((doc) => res.json(doc))
-      .catch((err) => console.log({ create: 'Error creating new request!' }));
+      .catch((err) => console.log({ error: 'Error creating new request! ' + err }));
   }
 );
 

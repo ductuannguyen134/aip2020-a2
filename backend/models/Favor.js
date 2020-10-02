@@ -5,7 +5,6 @@ const Schema = mongoose.Schema;
 const favorModel = {
     favorID: {
         type: Schema.Types.ObjectId,
-        required: true,
     }, 
     ownerID: {
         type: Schema.Types.ObjectId,
