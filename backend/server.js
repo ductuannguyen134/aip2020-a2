@@ -6,6 +6,7 @@ const passport = require("passport");
 const path = require("path");
 const user = require("./routes/api/user");
 const request = require("./routes/api/request");
+const cors = require("cors");
 // const favor = require("./routes/api/favor");
 
 const app = express();
@@ -13,6 +14,7 @@ const app = express();
 //middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // db configuration
 const DB_URL = process.env.DATABASE_URL;
