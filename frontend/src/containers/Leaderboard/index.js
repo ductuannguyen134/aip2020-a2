@@ -1,24 +1,21 @@
 import React from 'react';
 import {Container, TextField, Button, ButtonGroup} from '@material-ui/core';
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, useHistory } from 'react-router-dom';
 import {useUserStatus} from '../../hoc/UserContext';
 
 function Leaderboard() {
 
     const user = useUserStatus();
+    const history = useHistory();
 
     return (
         <div>
              <Container fixed style={{backgroundColor: '#ffffff', padding: 50}}>
                 <h1>Leaderboard</h1>
                 {/* Router to debts and active */}
-                <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-                    <Link to="/leaderboard/debts">
-                        <Button>Debts</Button>
-                    </Link>    
-                    <Link to="/leaderboard/active">
-                        <Button>Active</Button>
-                    </Link> 
+                <ButtonGroup  aria-label="contained primary button group">
+                        <Button variant="contained" color="primary" onClick={()=>{history.push("/leaderboard/debts")}}>Debts</Button>
+                        <Button variant="contained" color="secondary" onClick={()=>{history.push("/leaderboard/active")}}>Active</Button>
                 </ButtonGroup>
                 <Route path="/leaderboard/active">
                     <h1>Active</h1>

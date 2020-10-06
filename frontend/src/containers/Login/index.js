@@ -27,7 +27,7 @@ function Login() {
             }).then((response)=>{
                 dispatch({
                     type: ACTIONS.SET_USER,
-                    user: response.data.token
+                    user: response.data
                 });
                 setMessage("Successfully logged In!");
                 history.push("/");

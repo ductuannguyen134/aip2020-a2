@@ -11,7 +11,6 @@ function Header() {
     const history = useHistory();
 
     function logout(){
-        localStorage.clear();
         dispatch({
             type: ACTIONS.SET_USER,
             user: null
@@ -21,12 +20,13 @@ function Header() {
 
     return (
         <nav className="header">
-            <Link to="/">
-                <div className="header__logo">
-                    <HomeIcon />
-                </div>
-            </Link>
-        
+            <div className="header__brand">
+                <Link to="/">
+                    <div className="header__logo">
+                        <HomeIcon />
+                    </div>
+                </Link>
+            </div>
             <div className="header__nav">
                 {user && (
                     <>

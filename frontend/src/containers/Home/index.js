@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Container, TextField, Button, ButtonGroup, DialogTitle, Dialog, IconButton} from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import {Container, TextField, Button, ButtonGroup, IconButton} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,25 +10,27 @@ import Paper from '@material-ui/core/Paper';
 import { Link, Route, useHistory } from 'react-router-dom';
 import {useUserStatus} from '../../hoc/UserContext';
 import AddIcon from '@material-ui/icons/Add';
-import './style.css'
+import './style.css';
+import axios from '../../hoc/axios';
 
 function Home() {
 
-    const [user,setUser] = useUserStatus();
-
+    const [{user},dispatch] = useUserStatus();
+    const [requests, setRequests] = useState([]);
+    const history = useHistory();
     
-    function createData(request, from, rewards) {
-        return {request, from, rewards};
-      }
-      
-    const rows = [
-        createData('Clean the table', 'Chris', 'Candy'),
-        createData('Tidy the room', 'Thinh', 'Pizza'),
-        createData('Do homework', 'Hailey', 'Coffee'),
-        createData('Deliver food', 'Duc', 'Tea'),
-    ];
-
+    useEffect( async () => {
+        await axios.get("/api/request/").then((response)=>{
+            console.log(response);
+            setRequests(response.data);            
+        }).catch((error)=>{
+            console.log(error);
+        })
+    }, []);
         
+    const data = [requests];
+    console.log(data);
+
     return (
         <div className="home">
             <div className="home__data">
@@ -50,21 +52,37 @@ function Home() {
                             </TableRow>
                             </TableHead>
                             <TableBody>
-                            {rows.map((row) => (
-                                <TableRow key={row.request}>
+                            {requests.map((request) => (
+                                <TableRow key={request._id}>
                                 <TableCell component="th" scope="row">
-                                    {row.request}
+                                    {request.requestContent}
                                 </TableCell>
-                                <TableCell align="right">{row.from}</TableCell>
-                                <TableCell align="right">{row.rewards}</TableCell>
                                 <TableCell align="right">
-                                    <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-                                        <Link to={!user && "/login"}>
-                                            <Button>Add Favor</Button>
-                                        </Link>    
-                                        <Link to={!user && "/login"}>
-                                            <Button>Resolve</Button>
-                                        </Link> 
+                                    {
+                                        request.requestFavors.map((favor)=>(
+                                            <>
+                                                <p>{favor.from}</p>
+                                            </>
+                                        ))
+                                    }
+                                </TableCell>
+                                <TableCell align="right">
+                                    {
+                                        request.requestFavors.map((favor)=>(
+                                            <>
+                                                <p>{favor.rewards.map((reward)=>(
+                                                    <>
+                                                        <p>{reward.name}: {reward.quantity} from {favor.from}</p>
+                                                    </>
+                                                ))}</p>
+                                            </>
+                                        ))
+                                    }
+                                </TableCell>
+                                <TableCell align="right">
+                                    <ButtonGroup  aria-label="contained primary button group">
+                                            <Button variant="contained" color="primary" onClick={()=>{history.push( !user && "/login")}}>Add Favor</Button>
+                                            <Button variant="contained" color="secondary" onClick={()=>{history.push( !user && "/login")}}>Resolve</Button>
                                     </ButtonGroup>
                                 </TableCell>
                                 </TableRow>

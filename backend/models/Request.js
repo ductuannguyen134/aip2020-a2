@@ -10,12 +10,12 @@ const requestModel = {
     type: String,
     required: true,
   },
-  requestFavors: {
+  requestFavors: [{
     from: {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    rewards: {
+    rewards: [{
       name: {
         type: String,
         required: true,
@@ -24,8 +24,8 @@ const requestModel = {
         type: Number,
         required: true,
       }
-    },
-  },
+    }],
+  }],
   resolverID: {
     type: Schema.Types.ObjectId,
     ref: 'User',
