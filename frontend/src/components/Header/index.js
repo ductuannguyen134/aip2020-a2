@@ -2,30 +2,35 @@ import React from 'react';
 import HomeIcon from '@material-ui/icons/Home';
 import './style.css';
 import { Link, useHistory } from 'react-router-dom';
-import {useUserStatus} from '../../hoc/UserContext'
+import {useUserStatus} from '../../hoc/UserContext';
+import {ACTIONS} from '../../hoc/reducer';
 
 function Header() {
     //retrieve user status from userContext, either logged in or not logged in
-    const [user, setUser] = useUserStatus();
+    const [{user}, dispatch] = useUserStatus();
     const history = useHistory();
 
     function logout(){
-        setUser(false);
-        history.push("/");
+        dispatch({
+            type: ACTIONS.SET_USER,
+            user: null
+        });
+        history.push("/")
     }
 
     return (
         <nav className="header">
-            <Link to="/">
-                <div className="header__logo">
-                    <HomeIcon />
-                </div>
-            </Link>
-        
+            <div className="header__brand">
+                <Link to="/">
+                    <div className="header__logo">
+                        <HomeIcon />
+                    </div>
+                </Link>
+            </div>
             <div className="header__nav">
                 {user && (
                     <>
-                        <p style={{color: "white"}}>Hello, User!</p>
+                        <p style={{color: "white"}}>Hello, {user.userName}</p>
                         <Link to="/favors" className="header__link">
                             <div className="header__option">
                                 <span>Your Favor</span>
