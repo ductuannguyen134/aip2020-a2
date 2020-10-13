@@ -30,7 +30,21 @@ router.post('/signup', (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) => res.json(user))
+            .then((user) => {
+              const payload = {
+                userName: newUser.userName,
+              };
+              jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
+                if (err) {
+                  console.log(err);
+                }
+                return res.json({
+                  success: true,
+                  token: 'Bearer ' + token,
+                  userName: user.userName,
+                });
+              });
+            })
             .catch((err) => console.log({ error: 'Cannot create new user' }));
         });
       });

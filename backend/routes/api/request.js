@@ -6,12 +6,34 @@ const validateRequestInput = require('../../validation/request');
 
 router.get('/', (req, res) => {
     Request.find({})
+      .populate('requestFavors.from')
       .then((requests) => res.status(200).json(requests))
       .catch((err) =>
         res.status(400).json({ user: 'Error fetching requests of logged in user!' })
       );
   }
 );
+
+//test insert request //////////////////////////////////////
+router.post('/test/insert', (req,res)=>{
+  const requestContent = req.body.requestContent;
+  const requestFavors = req.body.requestFavors;
+  const resolverID = req.body.resolverID;
+  const proof = req.body.proof;
+/////////////////////////////////////////////////////////////
+
+  console.log(req);
+
+  const newReq = new Request({
+    requestContent: requestContent,
+    requestFavors: requestFavors,
+    resolverID: resolverID,
+    resolverProof: proof,
+  })
+
+  newReq.save();
+  res.send(newReq)
+})
 
 router.get('/request/:id', (req, res) => {
   Request.find({ _id: req.params.id })
@@ -33,16 +55,37 @@ router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const user = req.user.user_name;
-    const request = req.body;
-    const { errors, isValid } = validateRequestInput(request);
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
-    request.user = user;
-    const newRequest = new Request(request);
-    newRequest
-      .save()
+    // const user = req.user.user_name;
+    // const request = req.body;
+    // const { errors, isValid } = validateRequestInput(request);
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
+    // request.user = user;
+    // const newRequest = new Request(request);
+    // newRequest
+    //   .save()
+    //   .then((doc) => res.json(doc))
+    //   .catch((err) => console.log({ error: 'Error creating new request! ' + err }));
+    const requestContent = req.body.requestContent;
+    const requestFavors = req.body.requestFavors;
+    const resolverID = req.body.resolverID;
+    const proof = req.body.proof;
+
+    //check for request body
+    // const { errors, isValid } = validateRequestInput(req.body);
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
+
+    const newReq = new Request({
+      requestContent: requestContent,
+      requestFavors: requestFavors,
+      resolverID: resolverID,
+      resolverProof: proof,
+    })
+
+    newReq.save()
       .then((doc) => res.json(doc))
       .catch((err) => console.log({ error: 'Error creating new request! ' + err }));
   }
