@@ -19,17 +19,73 @@ function Home() {
     const [requests, setRequests] = useState([]);
     const history = useHistory();
     
-    useEffect( async () => {
-        await axios.get("/api/request/").then((response)=>{
-            console.log(response);
-            setRequests(response.data);            
-        }).catch((error)=>{
-            console.log(error);
-        })
+    useEffect(() => {
+        async function fetchData(){
+            await axios.get("/api/request/").then((response)=>{
+                console.log(response);
+                setRequests(response.data);           
+            }).catch((error)=>{
+                console.log(error);
+            })
+        }
+        fetchData();
     }, []);
-        
-    const data = [requests];
-    console.log(data);
+
+    console.log(requests); 
+
+    //test adding hard coded request
+    const addRequest = async () => {
+        if(user){
+            await axios.post(
+                "/api/request/create", 
+                    {
+                        "requestContent": "This is another new request",
+                        "requestFavors": [
+                            {
+                                "from":"5f856131b91e2723bc883b6c",
+                                "rewards": [
+                                    {
+                                        "name": "candy",
+                                        "quantity": 3
+                                    },
+                                    {
+                                        "name": "pencil",
+                                        "quantity": 2
+                                    }
+                                ]  
+                            },
+                               {
+                                "from":"5f857d034454f882e027a37d",
+                                "rewards": [
+                                    {
+                                        "name": "candy",
+                                        "quantity": 3
+                                    },
+                                    {
+                                        "name": "pencil",
+                                        "quantity": 2
+                                    }
+                                ]  
+                            }
+                        ],
+                        "resolverID": "5f85564a51bbe043503d4706",
+                        "resolverProof": "Proven"
+                    }
+                    ,{
+                        headers: {
+                            'Authorization': user.token
+                        }
+                    }       
+            ).then((response)=>{
+                console.log(response);
+            }).catch((error)=>{
+                console.log(error);
+            })
+        }
+        else {
+            alert("You must log in to add a request!")
+        }
+    }
 
     return (
         <div className="home">
@@ -37,9 +93,10 @@ function Home() {
                 <Container fixed style={{backgroundColor: '#ffffff', padding: 50}}>
                     <div className="request__add">
                         <h1>Public requests</h1>
-                        <IconButton>
+                        <IconButton onClick={addRequest}>
                             <AddIcon />
-                        </IconButton>    
+                        </IconButton>   
+                        <span>(Test Create Request)</span> 
                     </div>
                     <TableContainer component={Paper}>
                         <Table className="table" aria-label="simple table">
@@ -61,7 +118,7 @@ function Home() {
                                     {
                                         request.requestFavors.map((favor)=>(
                                             <>
-                                                <p>{favor.from}</p>
+                                                <p>{favor.from.userName}</p>
                                             </>
                                         ))
                                     }
@@ -72,7 +129,7 @@ function Home() {
                                             <>
                                                 <p>{favor.rewards.map((reward)=>(
                                                     <>
-                                                        <p>{reward.name}: {reward.quantity} from {favor.from}</p>
+                                                        <p>{reward.name}: {reward.quantity} from {favor.from.userName}</p>
                                                     </>
                                                 ))}</p>
                                             </>
