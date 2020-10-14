@@ -6,9 +6,10 @@ import { Button, IconButton, Input } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import { useHistory } from 'react-router-dom';
+import axios from '../../hoc/axios';
 
-function FavorAdd() {
-
+function FavorAdd(props) {
+    const {favorList} = props;
     const [person, setPerson] = useState();
     const [item, setItem] = useState();
     const [itemNum, setItemNum] = useState();
@@ -37,6 +38,25 @@ function FavorAdd() {
     function cancel(){
         history.push('/favors');
     }
+    const handleSubmit = (event) => 
+    {
+        event.preventDefault();
+        alert("Submitted!");
+         const itemDetail = {
+            name: item,
+            quantity: itemNum
+        }
+        const favor = {
+    // ownerID: "5f862b953d152a307c75cd05",
+    // debtorID: "5f864281a9213334cb6592ec",
+    items: [itemDetail]}
+    
+    console.log(favor);
+
+    axios.post("/api/favor/create", favor)
+      .then(res => console.log(res.data))
+      .catch((err) => console.log(err));
+        }
 
     return (
         <div className="favorAdd">
@@ -92,7 +112,7 @@ function FavorAdd() {
                         <Input inputProps={{type: 'file'}}/>
                     </div>
                     <div className="favorAdd__buttons">
-                        <Button>Create Favor</Button>
+                        <Button onClick={handleSubmit}>Create Favor</Button>
                         <Button onClick={cancel}>Cancel</Button>
                     </div>
                 </div>
@@ -101,4 +121,4 @@ function FavorAdd() {
     )
 }
 
-export default FavorAdd;
+export default FavorAdd

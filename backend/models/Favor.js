@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
-const User = require('./User');
 const Schema = mongoose.Schema;
 
 const favorModel = {
-    favorID: {
-        type: Schema.Types.ObjectId,
-    }, 
     ownerID: {
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    debtID: {
+    debtorID: {
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    detail: {
+    items: [{
         name: {
             type: String,
             required: true,
@@ -23,27 +19,26 @@ const favorModel = {
             type: Number,
             required: true,
         },
-    },
-    status: {
+    }],
+    isComplete: {
         type: Boolean,
-        required: true,
+        default: false,
     },
     createdImage: {
         type: String,
-        required: true,
-    },
-    createdTime: {
-        type: Date.now,
-        required: true, 
     },
     completedImage: {
         type: String,
     },
     completedTime: {
         type: Schema.Types.Date,
-    }
+    },
+//      photo: {
+//     data: Buffer,
+//     contentType: String
+//   }
 }
 
-const FavorSchema = new mongoose.Schema(favorModel);
+const FavorSchema = new mongoose.Schema(favorModel, {timestamps: true});
 
-module.exports = mongoose.model('favors', FavorSchema);
+module.exports = mongoose.model('Favor', FavorSchema, "favors");

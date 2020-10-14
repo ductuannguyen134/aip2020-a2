@@ -2,24 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userModel = {
-  userID: {
-    type: Schema.Types.ObjectId,
-  },
   userName: {
     type: String,
     required: true,
+    unique: true,
+    trim: true,
+    minlength: 1,
   },
   password: {
     type: String,
     required: true,
-  },
-  numOfDebts: {
-    type: Number,
-    default: 0,
-  },
-  numOfCompletedRequests: {
-    type: Number,
-    default: 0,
   }
 };
 

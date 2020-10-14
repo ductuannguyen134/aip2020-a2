@@ -11,33 +11,31 @@ import Paper from '@material-ui/core/Paper';
 import './style.css';
 import AddIcon from '@material-ui/icons/Add';
 import FavorAdd from '../../components/FavorAdd';
+import axios from '../../hoc/axios';
+import {useUserStatus} from '../../hoc/UserContext';
 
 function Favors() {
-
-    const[favorLists, setFavorLists] = useState([]);
+    const [{user}, dispatch] = useUserStatus();
+    const[favorList, setFavorList] = useState([]);
     const [open, setOpen] = useState(false);
     let history = useHistory();
-
-    function createData(favorsID, favors, from, status, initialProof, resolvedProof) {
-        return {favorsID, favors, from, status, initialProof, resolvedProof};
-    }
-
-    const rows = [
-        createData(1,['1 chocolate, 1 coffe'], 'Chris', false, 'image', 'image'),
-        createData(2,['1 chocolate, 1 coffe'], 'Duc', false, 'image', 'image'),
-        createData(3,['1 chocolate, 1 coffe'], 'Hailey', false, 'image', 'image'),
-        createData(4,['1 chocolate, 1 coffe'], 'Thinh', false, 'image', 'image'),
-    ];
-
+       
+    // Retrieve a list of Favor for the user
     useEffect(() => {
-        setFavorLists(rows)
-    }, [])
+    async function fetchData(userID) {
+      const response = await axios.get(`/api/favor/user/${userID}`);
+      setFavorList(response.data);
+      console.log(response.data);
+    }
+    fetchData("5f862b953d152a307c75cd05").catch((error)=>{
+            console.log(error);
+        });
+    }, []);
     
-
     function handleComplete(id){
         if(window.confirm("Do you want to mark this favor as completed?")){
-            rows[id].status = true;
-            alert("Status:" + rows[id].status);
+            favorList[id].status = true;
+            alert("Status:" + favorList[id].isComplete);
         };
     }
 
@@ -75,18 +73,24 @@ function Favors() {
                             </TableRow>
                             </TableHead>
                             <TableBody>
-                            {favorLists.map((row) => (
-                                <TableRow key={row.favorsID}>
+                            {favorList.map((favor) => (
+                                <TableRow key={favor._id}>
                                 <TableCell component="th" scope="row">
-                                    {row.favors}
+                                    {
+                                        favor.items.map((item)=>(
+                                            <>
+                                                <p>{item.quantity} {item.name}</p>
+                                            </>
+                                        ))
+                                    }
                                 </TableCell>
-                                <TableCell align="right">{row.from}</TableCell>
-                                <TableCell align="right">{row.status ? "Completed" : "Uncompleted"}</TableCell>
-                                <TableCell align="right">{row.initialProof}</TableCell>
-                                <TableCell align="right">{row.resolvedProof}</TableCell>
+                                <TableCell align="right">{favor.debtorID.userName}</TableCell>
+                                <TableCell align="right">{favor.isComplete ? "Completed" : "Uncompleted"}</TableCell>
+                                <TableCell align="right">{favor.createdImage}</TableCell>
+                                <TableCell align="right">{favor.completedImage}</TableCell>
                                 <TableCell align="right">
                                     <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-                                        <Button onClick={()=>handleComplete(row.favorsID)}>Mark as completed</Button>
+                                        <Button onClick={()=>handleComplete(favor._id)}>Mark as completed</Button>
                                     </ButtonGroup>
                                 </TableCell>
                                 </TableRow>
@@ -98,7 +102,7 @@ function Favors() {
                     {/* Route to favor add */}
                     <Route path="/favors/add">
                         <Dialog maxWidth="lg" open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                            <FavorAdd />
+                            <FavorAdd favorList={favorList}/>
                         </Dialog>
                     </Route>
             </Container>
