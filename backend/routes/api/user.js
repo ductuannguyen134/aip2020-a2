@@ -42,6 +42,7 @@ router.post('/signup', (req, res) => {
                   success: true,
                   token: 'Bearer ' + token,
                   userName: user.userName,
+                  userID: user._id
                 });
               });
             })
@@ -76,6 +77,7 @@ router.post('/login', (req, res) => {
             success: true,
             token: 'Bearer ' + token,
             userName: user.userName,
+            userID: user._id
           });
         });
       } else {

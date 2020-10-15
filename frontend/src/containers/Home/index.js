@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Container, TextField, Button, ButtonGroup, IconButton} from '@material-ui/core';
+import {Container, TextField, Button, ButtonGroup, IconButton, Dialog} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,12 +12,14 @@ import {useUserStatus} from '../../hoc/UserContext';
 import AddIcon from '@material-ui/icons/Add';
 import './style.css';
 import axios from '../../hoc/axios';
+import RequestAdd from '../../components/RequestAdd';
 
 function Home() {
 
     const [{user},dispatch] = useUserStatus();
     const [requests, setRequests] = useState([]);
     const history = useHistory();
+    const [open, setOpen] = useState(false);
     
     useEffect(() => {
         async function fetchData(){
@@ -33,59 +35,14 @@ function Home() {
 
     console.log(requests); 
 
-    //test adding hard coded request
-    const addRequest = async () => {
-        if(user){
-            await axios.post(
-                "/api/request/create", 
-                    {
-                        "requestContent": "This is another new request",
-                        "requestFavors": [
-                            {
-                                "from":"5f856131b91e2723bc883b6c",
-                                "rewards": [
-                                    {
-                                        "name": "candy",
-                                        "quantity": 3
-                                    },
-                                    {
-                                        "name": "pencil",
-                                        "quantity": 2
-                                    }
-                                ]  
-                            },
-                               {
-                                "from":"5f857d034454f882e027a37d",
-                                "rewards": [
-                                    {
-                                        "name": "candy",
-                                        "quantity": 3
-                                    },
-                                    {
-                                        "name": "pencil",
-                                        "quantity": 2
-                                    }
-                                ]  
-                            }
-                        ],
-                        "resolverID": "5f85564a51bbe043503d4706",
-                        "resolverProof": "Proven"
-                    }
-                    ,{
-                        headers: {
-                            'Authorization': user.token
-                        }
-                    }       
-            ).then((response)=>{
-                console.log(response);
-            }).catch((error)=>{
-                console.log(error);
-            })
-        }
-        else {
-            alert("You must log in to add a request!")
-        }
-    }
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+    const handleClose = () => {
+        setOpen(false);
+        history.push("/");
+    };    
 
     return (
         <div className="home">
@@ -93,7 +50,7 @@ function Home() {
                 <Container fixed style={{backgroundColor: '#ffffff', padding: 50}}>
                     <div className="request__add">
                         <h1>Public requests</h1>
-                        <IconButton onClick={addRequest}>
+                        <IconButton onClick={handleClickOpen}>
                             <AddIcon />
                         </IconButton>   
                         <span>(Test Create Request)</span> 
@@ -148,6 +105,12 @@ function Home() {
                         </Table>
                     </TableContainer>
                 </Container>
+
+                {/* Pop up add request */}
+                <Dialog maxWidth="lg" open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <RequestAdd />
+                </Dialog>
+
             </div>
         </div>
     )

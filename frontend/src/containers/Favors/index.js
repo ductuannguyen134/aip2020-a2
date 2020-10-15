@@ -22,12 +22,13 @@ function Favors() {
        
     // Retrieve a list of Favor for the user
     useEffect(() => {
+        console.log(user.userID);
     async function fetchData(userID) {
       const response = await axios.get(`/api/favor/user/${userID}`);
       setFavorList(response.data);
       console.log(response.data);
     }
-    fetchData("5f862b953d152a307c75cd05").catch((error)=>{
+    fetchData(user.userID).catch((error)=>{
             console.log(error);
         });
     }, []);

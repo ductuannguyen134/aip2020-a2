@@ -3,6 +3,13 @@ const router = express.Router();
 const Favor = require("../../models/Favor");
 const passport = require("passport");
 
+//test get all favors from db
+// router.get("/",async (req,res)=>{
+//   await Favor.find().then((favors)=>res.status(200).json(favors)).catch((err)=>{
+//     console.log(err);
+//   })
+// })
+
 // Retrieve favor list for a specific user
 router.get("/user/:userID", async (req, res) => {
   //passport.authenticate("jwt", { session: false }),
@@ -26,7 +33,7 @@ router.post(
       .save()
       .then((favor) => res.json(favor))
       .catch((err) =>
-        res.status(400).json('Error: ' + err)
+      res.status(400).json('Error: ' + err)
       );
   }
 );

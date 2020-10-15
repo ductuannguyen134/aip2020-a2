@@ -6,6 +6,7 @@ const passport = require("passport");
 const path = require("path");
 const user = require("./routes/api/user");
 const request = require("./routes/api/request");
+const favor = require("./routes/api/favor");
 const cors = require("cors");
 // const favor = require("./routes/api/favor");
 
@@ -30,7 +31,7 @@ app.use(passport.initialize());
 require("./middleware/passport")(passport);
 app.use("/api/user", user);
 app.use("/api/request/", request);
-// app.use("api/favor/", favor);
+app.use("/api/favor/", favor);
 
 if (process.env.NODE_ENV === "production") {
    app.use(express.static("client/build"));
@@ -39,5 +40,5 @@ if (process.env.NODE_ENV === "production") {
    });
 }
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
