@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import "./styles.css";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -10,29 +10,51 @@ import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext";
 
 function RequestAdd() {
-  const [person, setPerson] = useState();
-  const [item, setItem] = useState();
-  const [itemNum, setItemNum] = useState();
   const [{ user }, dispatch] = useUserStatus();
   const [request, setRequest] = useState();
-  const [users, setUsers] = useState([]);
+  const [prizes, setPrize] = useState([]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const getUserList = async () => {
-      const response = await axios.get("/api/user/users");
-      const users = response.data;
+    const getPrizeList = async () => {
+      const res = await axios.get("/api/prize/");
+      const prizes = res.data;
 
-      setUsers(users)
-    }
-    
-    getUserList()
+      setPrize(prizes);
+    };
+
+    getPrizeList();
   }, []);
 
-  const history = useHistory();
+  const handleAddItem = () => {
+    if (items.length < prizes.length) {
+      setItems([...items, { id: "", quantity: 0 }]);
+    } else {
+      alert("Cant add more type of reward");
+    }
+  };
+
+  const handleChangeItem = (item, index) => {
+    const list = [...items];
+    list[index].id = item;
+    setItems(list);
+  };
+
+  const handleChangeItemNum = (quantity, index) => {
+    const list = [...items];
+    list[index].quantity = quantity;
+    setItems(list);
+  };
+
+  const handleRemoveItem = (index) => {
+    const list = [...items];
+    list.splice(index, 1);
+    setItems(list);
+  };
 
   const addRequest = async () => {
     if (user) {
-      if (!item || !itemNum || !request) {
+      if (!items || !request) {
         alert("All fields must be filled in!");
       } else {
         await axios
@@ -43,16 +65,11 @@ function RequestAdd() {
               requestFavors: [
                 {
                   from: user.userID,
-                  rewards: [
-                    {
-                      name: item,
-                      quantity: itemNum,
-                    },
-                  ],
+                  rewards: [...items],
                 },
               ],
-              resolverID: "5f76c9967785b0887cefb148",
-              resolverProof: "Proven",
+              resolverID: null,
+              resolverProof: null,
             },
             {
               headers: {
@@ -69,7 +86,7 @@ function RequestAdd() {
           });
       }
     } else {
-      alert("You must log in to add a request!");
+      alert("You must log in again to add a request!");
     }
   };
 
@@ -79,8 +96,9 @@ function RequestAdd() {
         <h1>Add a new request</h1>
         <div className="req-dialog-request">
           <div className="req-dialog-request text">
-            <p>Request:</p>
-            <span>(Required)</span>
+            <p>
+              Request: <span style={{ color: "red" }}>(Required)</span>
+            </p>
           </div>
           <div className="req-dialog-request-input">
             <textarea
@@ -93,55 +111,55 @@ function RequestAdd() {
         </div>
         <div className="req-dialog-reward">
           <div className="req-dialog-reward text">
-            <p>Rewards:</p>
-            <span>(Required)</span>
+            <p>
+              Rewards: <span style={{ color: "red" }}>(Required)</span>
+            </p>
           </div>
           <div className="widgets">
-            <div className="req-choosefrom">
-              <p>From: </p>
-              <Select
-                id="choosePerson"
-                value={person}
-                onChange={(e) => setPerson(e.target.value)}
-                style={{ width: "20ch" }}
-              >
-                {users.map(user => (
-                    <MenuItem value={user["_id"]}>{user["userName"]}</MenuItem>
-                ))}
-              </Select>
+            <p>Items: </p>
+            <div>
+              {items.map((item, index) => (
+                <div
+                  className="req-chooseitem"
+                  key={item.id != null ? item.id : items.length}
+                >
+                  <Select
+                    id="chooseItem"
+                    value={item.id}
+                    onChange={(e) => handleChangeItem(e.target.value, index)}
+                  >
+                    {prizes.map((prize) => (
+                      <MenuItem value={prize["_id"]}>{prize["prize"]}</MenuItem>
+                    ))}
+                  </Select>
+                  <Input
+                    style={{ minWidth: "10px" }}
+                    className="req-chooseItemNum"
+                    value={item.quantity}
+                    onChange={(e) => handleChangeItemNum(e.target.value, index)}
+                    inputProps={{
+                      type: "number",
+                      min: 0,
+                      max: 10,
+                    }}
+                  />
+                  <IconButton onClick={() => handleRemoveItem(index)}>
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
+              ))}
             </div>
-            <div className="req-chooseitem">
-              <p>Items: </p>
-              <Select
-                id="chooseItem"
-                value={item}
-                onChange={(e) => setItem(e.target.value)}
-              >
-                <MenuItem value="Chocolate">Chocolate</MenuItem>
-                <MenuItem value="Coffee">Coffee</MenuItem>
-                <MenuItem value="Candy">Candy</MenuItem>
-                <MenuItem value="Tea">Tea</MenuItem>
-              </Select>
-              <Input
-                className="req-chooseItemNum"
-                onChange={(e) => setItemNum(e.target.value)}
-                inputProps={{
-                  type: "number",
-                  min: 0,
-                  max: 100,
-                }}
-              />
-              <IconButton onClick={() => alert("Remove")}>
-                <RemoveIcon />
+            {items.length == prizes.length ? null : (
+              <IconButton onClick={handleAddItem}>
+                <AddIcon />
               </IconButton>
-            </div>
-            <IconButton onClick={() => alert("add")}>
-              <AddIcon />
-            </IconButton>
+            )}
           </div>
         </div>
         <div className="req-button">
-          <Button onClick={addRequest}>Create Request</Button>
+          <Button onClick={addRequest} color="primary" variant="contained">
+            Create Request
+          </Button>
         </div>
       </div>
     </div>
