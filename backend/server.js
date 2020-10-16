@@ -6,8 +6,8 @@ const passport = require("passport");
 const path = require("path");
 const user = require("./routes/api/user");
 const request = require("./routes/api/request");
-const cors = require("cors");
 const favor = require("./routes/api/favor");
+const cors = require("cors");
 
 const app = express();
 
