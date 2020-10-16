@@ -8,7 +8,6 @@ const user = require("./routes/api/user");
 const request = require("./routes/api/request");
 const favor = require("./routes/api/favor");
 const cors = require("cors");
-const favor = require("./routes/api/favor");
 
 const app = express();
 

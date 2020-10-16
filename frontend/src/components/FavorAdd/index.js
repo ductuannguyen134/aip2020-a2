@@ -18,23 +18,23 @@ function FavorAdd(props) {
         setPerson(e.target.value);
     }
 
-function handleInputChange (e, index) {
-  const { name, value } = e.target;
-  const list = [...inputList];
-  list[index][name] = value;
-  setInputList(list);
-};
- 
-function handleRemoveInputField (index) {
-  const list = [...inputList];
-  list.splice(index, 1);
-  setInputList(list);
-};
- 
+    function handleInputChange (e, index) {
+        const { name, value } = e.target;
+        const list = [...inputList];
+        list[index][name] = value;
+        setInputList(list);
+        };
+    
+    function handleRemoveInputField (index) {
+    const list = [...inputList];
+    list.splice(index, 1);
+    setInputList(list);
+    };
+    
 
-function handleAddInputField () {
-  setInputList([...inputList, { name: "", quantity: "" }]);
-};
+    function handleAddInputField () {
+    setInputList([...inputList, { name: "", quantity: "" }]);
+    };
 
     function cancel(e){
         history.push('/favors');
@@ -45,22 +45,22 @@ function handleAddInputField () {
         event.preventDefault();
         alert("Submitted!");
         const favor = {
-    ownerID: "5f862b953d152a307c75cd05",
-    // debtorID: "5f864281a9213334cb6592ec",
-    debtorID: "5f86ec1cec72c8517e88b13d",
-    items: inputList
-};
+            ownerID: "5f862b953d152a307c75cd05",
+            // debtorID: "5f864281a9213334cb6592ec",
+            debtorID: "5f86ec1cec72c8517e88b13d",
+            items: inputList
+        };
     
-    console.log(favor);
+        console.log(favor);
 
-    axios.post("/api/favor/create", favor)
-      .then(res => 
-        {
-            console.log(res.data);
-            handleAdd(favor);
-        })
-      .catch((err) => console.log(err));
-        }
+        axios.post("/api/favor/create", favor)
+        .then(res => 
+            {
+                console.log(res.data);
+                handleAdd(favor);
+            })
+        .catch((err) => console.log(err));
+    }
 
     return (
         <div className="favorAdd">
