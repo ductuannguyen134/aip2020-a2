@@ -11,56 +11,30 @@ import axios from '../../hoc/axios';
 function FavorAdd(props) {
     const { handleAdd, onUpdate } = props
     const [person, setPerson] = useState("");
-    const [item, setItem] = useState("");
-    const [itemNum, setItemNum] = useState(0);
+    const [inputList, setInputList] = useState([{ name: "", quantity: "" }]);
     let history = useHistory();
     
     function handleChangePerson(e){
         setPerson(e.target.value);
     }
 
-    function handleChangeItem(e){
-        setItem(e.target.value);
-    }
+function handleInputChange (e, index) {
+  const { name, value } = e.target;
+  const list = [...inputList];
+  list[index][name] = value;
+  setInputList(list);
+};
+ 
+function handleRemoveInputField (index) {
+  const list = [...inputList];
+  list.splice(index, 1);
+  setInputList(list);
+};
+ 
 
-    function handleChangeItemNum(e){
-        setItemNum(e.target.value);
-    }
-
-    function handleRemove(event){
-        alert("Removed");
-    }
-
-    function AddLine(event){
-        return(
-             <div className="favorAdd__chooseItems">
-                        <p>Items: </p>
-                        <Select
-                            id="chooseItem"
-                            value={item}
-                            onChange={handleChangeItem}
-                        >
-                            <MenuItem value="Chocolate">Chocolate</MenuItem>
-                            <MenuItem value="Coffee">Coffee</MenuItem>
-                            <MenuItem value="Candy">Candy</MenuItem>
-                            <MenuItem value="Tea">Tea</MenuItem>
-                        </Select>
-                        <Input
-                            className="favorAdd__itemNumber"
-                            value={itemNum}
-                            onChange={handleChangeItemNum}
-                            inputProps={{
-                                type: 'number',
-                                min: 0,
-                                max: 100,
-                            }}
-                        />
-                        <IconButton onClick={handleRemove}>
-                            <RemoveIcon />
-                        </IconButton>
-                    </div>
-        )
-    }
+function handleAddInputField () {
+  setInputList([...inputList, { name: "", quantity: "" }]);
+};
 
     function cancel(e){
         history.push('/favors');
@@ -70,15 +44,12 @@ function FavorAdd(props) {
     {
         event.preventDefault();
         alert("Submitted!");
-         const itemDetail = {
-            name: item,
-            quantity: itemNum
-        };
         const favor = {
     ownerID: "5f862b953d152a307c75cd05",
     // debtorID: "5f864281a9213334cb6592ec",
     debtorID: "5f86ec1cec72c8517e88b13d",
-    items: [itemDetail]};
+    items: inputList
+};
     
     console.log(favor);
 
@@ -110,10 +81,46 @@ function FavorAdd(props) {
                             <MenuItem value="Thinh">Thinh</MenuItem>
                         </Select>
                     </div>
-                    {AddLine()}
-                    <IconButton onClick={AddLine()}>
-                        <AddIcon />
-                    </IconButton> 
+
+                    {inputList.map((item, index) => {
+                         return (
+                    <div>
+                        <div className="favorAdd__chooseItems">
+                            <p>Items: </p>
+                            <Select
+                                id="chooseItem"
+                                name="name"
+                                value={item.name}
+                                onChange={(e)=>handleInputChange(e, index)}
+                            >
+                                <MenuItem value="Chocolate">Chocolate</MenuItem>
+                                <MenuItem value="Coffee">Coffee</MenuItem>
+                                <MenuItem value="Candy">Candy</MenuItem>
+                                <MenuItem value="Tea">Tea</MenuItem>
+                            </Select>
+
+                            <Input
+                                className="favorAdd__itemNumber"
+                                name="quantity"
+                                value={item.quantity}
+                                onChange={(e)=>handleInputChange(e, index)}
+                                inputProps={{
+                                    type: 'number',
+                                    min: 0,
+                                    max: 100,
+                                }}
+                            />
+                            {inputList.length !== 1 && <IconButton onClick={()=>handleRemoveInputField(index)}>
+                                <RemoveIcon />
+                            </IconButton>}
+                        </div>
+                        {inputList.length - 1 === index && <IconButton onClick={handleAddInputField}>
+                            <AddIcon />
+                            </IconButton> }
+
+                    </div>
+                         );
+                          })}
                 </div>
                 <div className="favorAdd__right">
                     <div className="favorAdd__proof">
