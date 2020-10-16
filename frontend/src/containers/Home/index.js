@@ -57,6 +57,39 @@ function Home() {
     history.push("/");
   };
 
+  const buttonGroup = (
+    <ButtonGroup aria-label="contained primary button group">
+      <Button
+        variant="contained"
+        color="default"
+        onClick={() => {
+          history.push(!user && "/login");
+        }}
+      >
+        Add Rewards
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => {
+          history.push(!user && "/login");
+        }}
+      >
+        Resolve
+      </Button>
+    </ButtonGroup>
+  );
+
+  const buttonDelete = (
+    <Button
+      variant="contained"
+      color="secondary"
+      onClick={() => alert("Delete favor")}
+    >
+      Delete
+    </Button>
+  );
+
   return (
     <div className="home">
       <div className="home__data">
@@ -73,8 +106,8 @@ function Home() {
               <TableHead>
                 <TableRow>
                   <TableCell>Requests</TableCell>
-                  <TableCell align="right">From</TableCell>
                   <TableCell align="right">Rewards</TableCell>
+                  <TableCell align="right">From</TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -86,48 +119,34 @@ function Home() {
                     </TableCell>
                     <TableCell align="right">
                       {request.requestFavors.map((favor) => (
-                        <>
-                          <p>{favor.from.userName}</p>
-                        </>
+                        <p>
+                          {favor.rewards.map((reward) => (
+                            <span>
+                              {reward.quantity} {reward.id.prize}{" "}
+                            </span>
+                          ))}
+                        </p>
                       ))}
                     </TableCell>
                     <TableCell align="right">
                       {request.requestFavors.map((favor) => (
-                        <>
-                          <p>
-                            {favor.rewards.map((reward) => (
-                              <>
-                                <p>
-                                  {reward.name}: {reward.quantity} from{" "}
-                                  {favor.from.userName}
-                                </p>
-                              </>
-                            ))}
-                          </p>
-                        </>
+                        <span>
+                          {" "}
+                          {user
+                            ? favor.from["_id"] != user.userID
+                              ? favor.from.userName
+                              : "You"
+                            : favor.from.userName}
+                          {"\n"}
+                        </span>
                       ))}
                     </TableCell>
                     <TableCell align="right">
-                      <ButtonGroup aria-label="contained primary button group">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => {
-                            history.push(!user && "/login");
-                          }}
-                        >
-                          Add Favor
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => {
-                            history.push(!user && "/login");
-                          }}
-                        >
-                          Resolve
-                        </Button>
-                      </ButtonGroup>
+                      {!user
+                        ? buttonGroup
+                        : user.userID == request.requestFavors[0].from["_id"]
+                        ? buttonDelete
+                        : buttonGroup}
                     </TableCell>
                   </TableRow>
                 ))}

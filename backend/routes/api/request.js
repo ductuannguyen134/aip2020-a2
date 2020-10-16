@@ -5,35 +5,14 @@ const passport = require("passport");
 const validateRequestInput = require("../../validation/request");
 
 router.get("/", (req, res) => {
-  Request.find({})
-    //.populate('requestFavors.from').exec()
-    .then((requests) => res.status(200).json(requests))
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ user: "Error fetching requests of logged in user!" })
-    );
-});
-
-//test insert request //////////////////////////////////////
-router.post("/test/insert", (req, res) => {
-  const requestContent = req.body.requestContent;
-  const requestFavors = req.body.requestFavors;
-  const resolverID = req.body.resolverID;
-  const proof = req.body.proof;
-  /////////////////////////////////////////////////////////////
-
-  console.log(req);
-
-  const newReq = new Request({
-    requestContent: requestContent,
-    requestFavors: requestFavors,
-    resolverID: resolverID,
-    resolverProof: proof,
-  });
-
-  newReq.save();
-  res.send(newReq);
+  Request.find({ resolverID: null })
+    .populate({ path: "requestFavors.from", select: "userName" })
+    .populate({ path: "requestFavors.rewards.id", select: "prize" })
+    .exec()
+    .then((requests) => {
+      res.status(200).send(requests);
+    })
+    .catch((err) => res.status(400).send(err));
 });
 
 router.get("/request/:id", (req, res) => {
@@ -63,16 +42,20 @@ router.post(
     const resolverID = req.body.resolverID;
     const resolverProof = req.body.resolverProof;
 
-    console.log(req.body.requestFavors);
+    newRequest = Request({
+      requestContent,
+      requestFavors: {
+        from: requestFavors[0].from,
+        rewards: [...requestFavors[0].rewards],
+      },
+      resolverID,
+      resolverProof,
+    });
 
-    res.status(200).send(req.body);
-
-    // newReq
-    //   .save()
-    //   .then((doc) => res.status(200).send(doc))
-    //   .catch((err) =>
-    //     console.log({ error: "Error creating new request! " + err })
-    //   );
+    newRequest
+      .save()
+      .then((doc) => res.send(doc))
+      .catch((err) => res.send(err));
   }
 );
 

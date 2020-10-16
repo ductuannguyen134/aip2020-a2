@@ -69,10 +69,6 @@ function RequestAdd() {
           resolverProof: null,
         };
 
-        console.log(request_params);
-
-        console.log(JSON.stringify(request_params));
-
         await axios
           .post("/api/request/create", request_params, {
             headers: {
@@ -80,8 +76,7 @@ function RequestAdd() {
             },
           })
           .then((response) => {
-            console.log(response);
-            // window.location("/");
+            window.location.reload();
           })
           .catch((error) => {
             console.log(error);
