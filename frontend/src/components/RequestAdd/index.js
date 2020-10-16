@@ -54,7 +54,7 @@ function RequestAdd() {
 
   const addRequest = async () => {
     if (user) {
-      if (!items || !request) {
+      if (items.length == 0 || !request) {
         alert("All fields must be filled in!");
       } else {
         const request_params = {

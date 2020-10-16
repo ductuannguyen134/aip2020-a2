@@ -44,10 +44,12 @@ router.post(
 
     newRequest = Request({
       requestContent,
-      requestFavors: {
-        from: requestFavors[0].from,
-        rewards: [...requestFavors[0].rewards],
-      },
+      requestFavors: [
+        {
+          from: requestFavors[0].from,
+          rewards: [...requestFavors[0].rewards],
+        },
+      ],
       resolverID,
       resolverProof,
     });
@@ -84,13 +86,47 @@ router.patch(
 router.delete(
   "/delete/:id",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    const user = req.user.user_name;
-    Request.findOneAndDelete({ user, _id: req.params.id })
-      .then((doc) => res.status(200).json(doc))
-      .catch((err) =>
-        res.status(400).json({ delete: "Error deleting a request" })
-      );
+  async (req, res) => {
+    const userID = req.user._id;
+    let request = undefined;
+
+    request = await Request.findOne({ _id: req.params.id });
+
+    function findFavorIdx(userID, listFavor) {
+      let result = -1;
+      listFavor.forEach((favor, index) => {
+        if (userID.toString() === favor.from.toString()) {
+          result = index;
+        }
+      });
+
+      return result;
+    }
+
+    const deleteIndex = findFavorIdx(req.user._id, request.requestFavors);
+
+    favorList = [...request.requestFavors];
+    favorList.splice(deleteIndex, 1);
+
+    request.requestFavors = favorList;
+
+    if (request.requestFavors.length == 0) {
+      try {
+        await Request.findOneAndDelete({ _id: req.params.id });
+      } catch (err) {
+        res.status(400).send(err);
+      }
+      res.status(200).send("Delete Request");
+    } else {
+      newReq = Request(request);
+
+      try {
+        const doc = await newReq.save();
+        res.send(doc);
+      } catch (err) {
+        res.send(err);
+      }
+    }
   }
 );
 

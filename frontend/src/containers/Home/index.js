@@ -32,17 +32,14 @@ function Home() {
       await axios
         .get("/api/request/")
         .then((response) => {
-          console.log(response);
           setRequests(response.data);
         })
         .catch((error) => {
-          console.log(error);
+          alert(error);
         });
     }
     fetchData();
   }, []);
-
-  console.log(requests);
 
   const handleClickOpen = () => {
     if (user) {
@@ -55,6 +52,21 @@ function Home() {
   const handleClose = () => {
     setOpen(false);
     history.push("/");
+  };
+
+  const handleDeleteClick = async (id) => {
+    let res;
+    try {
+      res = await axios.delete(`/api/request/delete/${id}`, {
+        headers: {
+          Authorization: user.token,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
+    window.location.reload();
   };
 
   const buttonGroup = (
@@ -80,22 +92,33 @@ function Home() {
     </ButtonGroup>
   );
 
-  const buttonDelete = (
+  const buttonDelete = (id) => (
     <Button
       variant="contained"
       color="secondary"
-      onClick={() => alert("Delete favor")}
+      onClick={() => handleDeleteClick(id)}
     >
       Delete
     </Button>
   );
+
+  const verifyUser = (id, array) => {
+    let temp = 0;
+    array.forEach((element) => {
+      if (id === element.from["_id"]) {
+        temp += 1;
+        return;
+      }
+    });
+    return temp > 0 ? true : false;
+  };
 
   return (
     <div className="home">
       <div className="home__data">
         <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
           <div className="request__add">
-            <h1>Public requests</h1>
+            <h1>Active public requests</h1>
             <IconButton onClick={handleClickOpen}>
               <AddIcon />
             </IconButton>
@@ -130,22 +153,20 @@ function Home() {
                     </TableCell>
                     <TableCell align="right">
                       {request.requestFavors.map((favor) => (
-                        <span>
-                          {" "}
+                        <p>
                           {user
                             ? favor.from["_id"] != user.userID
                               ? favor.from.userName
                               : "You"
                             : favor.from.userName}
-                          {"\n"}
-                        </span>
+                        </p>
                       ))}
                     </TableCell>
                     <TableCell align="right">
                       {!user
                         ? buttonGroup
-                        : user.userID == request.requestFavors[0].from["_id"]
-                        ? buttonDelete
+                        : verifyUser(user.userID, request.requestFavors)
+                        ? buttonDelete(request["_id"])
                         : buttonGroup}
                     </TableCell>
                   </TableRow>
