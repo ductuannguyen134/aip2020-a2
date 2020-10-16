@@ -28,7 +28,7 @@ function RequestAdd() {
 
   const handleAddItem = () => {
     if (items.length < prizes.length) {
-      setItems([...items, { id: "", quantity: 0 }]);
+      setItems([...items, { id: "", quantity: 1 }]);
     } else {
       alert("Cant add more type of reward");
     }
@@ -57,29 +57,31 @@ function RequestAdd() {
       if (!items || !request) {
         alert("All fields must be filled in!");
       } else {
-        await axios
-          .post(
-            "/api/request/create",
+        const request_params = {
+          requestContent: request,
+          requestFavors: [
             {
-              requestContent: request,
-              requestFavors: [
-                {
-                  from: user.userID,
-                  rewards: [...items],
-                },
-              ],
-              resolverID: null,
-              resolverProof: null,
+              from: user.userID,
+              rewards: [...items],
             },
-            {
-              headers: {
-                Authorization: user.token,
-              },
-            }
-          )
+          ],
+          resolverID: null,
+          resolverProof: null,
+        };
+
+        console.log(request_params);
+
+        console.log(JSON.stringify(request_params));
+
+        await axios
+          .post("/api/request/create", request_params, {
+            headers: {
+              Authorization: user.token,
+            },
+          })
           .then((response) => {
             console.log(response);
-            window.location("/");
+            // window.location("/");
           })
           .catch((error) => {
             console.log(error);
@@ -139,7 +141,7 @@ function RequestAdd() {
                     onChange={(e) => handleChangeItemNum(e.target.value, index)}
                     inputProps={{
                       type: "number",
-                      min: 0,
+                      min: 1,
                       max: 10,
                     }}
                   />
