@@ -26,7 +26,6 @@ function Favors() {
     async function fetchData(userID) {
       const response = await axios.get(`/api/favor/user/${userID}`);
       setFavorList(response.data);
-      console.log(response.data);
     }
     fetchData(user.userID).catch((error)=>{
             console.log(error);
@@ -35,16 +34,37 @@ function Favors() {
     
     function handleComplete(id){
         if(window.confirm("Do you want to mark this favor as completed?")){
-            favorList[id].status = true;
-            alert("Status:" + favorList[id].isComplete);
+            axios.patch(`api/favor/update/${id}`)
+            .then(res => 
+                {
+                    console.log(res.data);
+                    setFavorList(favorList.map((favor) => (favor._id === id ? { ...favor, isComplete: true } : favor)));
+                })
+            .catch((error)=>console.log(error));
         };
     }
 
-    const handleClickOpen = () => {
+    function handleAdd(favor) {
+        setFavorList([...favorList, favor]);
+    };
+
+  function handleDelete(id) {
+      if(window.confirm("Do you want to delete this favor?")){
+            axios.delete(`api/favor/delete/${id}`)
+            .then(res => 
+                {
+                    console.log(res.data);
+                    setFavorList(favorList.filter((favor) => favor._id !== id));
+                })
+            .catch((error)=>console.log(error));
+        };
+  };
+
+    function handleClickOpen(e) {
         setOpen(true);
       };
     
-    const handleClose = () => {
+    function handleClose (e) {
         setOpen(false);
         history.push("/favors");
     };    
@@ -74,28 +94,39 @@ function Favors() {
                             </TableRow>
                             </TableHead>
                             <TableBody>
-                            {favorList.map((favor) => (
-                                <TableRow key={favor._id}>
-                                <TableCell component="th" scope="row">
-                                    {
-                                        favor.items.map((item)=>(
-                                            <>
-                                                <p>{item.quantity} {item.name}</p>
-                                            </>
-                                        ))
-                                    }
-                                </TableCell>
-                                <TableCell align="right">{favor.debtorID.userName}</TableCell>
-                                <TableCell align="right">{favor.isComplete ? "Completed" : "Uncompleted"}</TableCell>
-                                <TableCell align="right">{favor.createdImage}</TableCell>
-                                <TableCell align="right">{favor.completedImage}</TableCell>
-                                <TableCell align="right">
-                                    <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-                                        <Button onClick={()=>handleComplete(favor._id)}>Mark as completed</Button>
-                                    </ButtonGroup>
-                                </TableCell>
-                                </TableRow>
-                            ))}
+                            {favorList.length > 0 ? (
+                                favorList.map((favor) => (
+                                    <TableRow key={favor._id}>
+                                    <TableCell component="th" scope="row">
+                                        {
+                                            favor.items.map((item)=>(
+                                                <>
+                                                    <p>{item.quantity} {item.name}</p>
+                                                </>
+                                            ))
+                                        }
+                                    </TableCell>
+                                    <TableCell align="right">{favor.debtorID.userName}</TableCell>
+                                    <TableCell align="right">{favor.isComplete ? "Completed" : "Uncompleted"}</TableCell>
+                                    <TableCell align="right">{favor.createdImage}</TableCell>
+                                    <TableCell align="right">{favor.completedImage}</TableCell>
+                                    <TableCell align="right">
+                                        <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
+                                            <Button onClick={(e)=>handleComplete(favor._id)}>Complete</Button>
+                                        </ButtonGroup>
+                                        <ButtonGroup variant="contained" color="secondary">
+                                            <Button onClick={(e)=>handleDelete(favor._id)}>Delete</Button>
+                                        </ButtonGroup>
+                                    </TableCell>
+                                    </TableRow>
+                                ))
+                              ) : (
+                              <TableRow>
+                                      <TableCell align="center" colSpan={12}>
+                                          No favor has been added
+                                        </TableCell>
+                             </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -103,7 +134,7 @@ function Favors() {
                     {/* Route to favor add */}
                     <Route path="/favors/add">
                         <Dialog maxWidth="lg" open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                            <FavorAdd favorList={favorList}/>
+                            <FavorAdd handleAdd = {handleAdd}/>
                         </Dialog>
                     </Route>
             </Container>

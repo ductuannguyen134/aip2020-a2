@@ -12,7 +12,7 @@ const passport = require("passport");
 
 // Retrieve favor list for a specific user
 router.get("/user/:userID", async (req, res) => {
-  //passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   await Favor.find({"ownerID": req.params.userID}).populate('debtorID','userName').exec()
     .then((favors) => res.status(200).json(favors))
     .catch((err) =>
@@ -25,7 +25,7 @@ router.get("/user/:userID", async (req, res) => {
 // Create new favor
 router.post(
   "/create",
-  //passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const favor = req.body;
     const newFavor = new Favor(favor);
@@ -35,7 +35,25 @@ router.post(
       .catch((err) =>
       res.status(400).json('Error: ' + err)
       );
-  }
+  } 
 );
 
+// Update a specific favor's status as Completed
+router.patch(
+  "/update/:id",
+  // passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+      Favor.update({_id: req.params.id}, {$set:{isComplete: true} })
+  .then(() => res.json('Favor is marked as completed!'))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+    
+// Delete a specific favor
+router.route('/delete/:id').delete(
+  // passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+  Favor.deleteOne({_id: req.params.id})
+   .then(() => res.json('Item Deleted'))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
 module.exports = router;

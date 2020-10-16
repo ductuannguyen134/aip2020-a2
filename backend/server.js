@@ -8,7 +8,7 @@ const user = require("./routes/api/user");
 const request = require("./routes/api/request");
 const favor = require("./routes/api/favor");
 const cors = require("cors");
-// const favor = require("./routes/api/favor");
+const favor = require("./routes/api/favor");
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(cors());
 // db configuration
 const DB_URL = process.env.DATABASE_URL;
 mongoose
-   .connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+   .connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true , useCreateIndex: true})
    .then(() => console.log("Database connected successful"))
    .catch(err => console.log(err));
 
