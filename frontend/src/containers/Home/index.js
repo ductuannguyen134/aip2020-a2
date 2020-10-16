@@ -53,7 +53,7 @@ function Home() {
                         <IconButton onClick={handleClickOpen}>
                             <AddIcon />
                         </IconButton>   
-                        <span>(Test Create Request)</span> 
+                        <span>(Create Request)</span> 
                     </div>
                     <TableContainer component={Paper}>
                         <Table className="table" aria-label="simple table">
