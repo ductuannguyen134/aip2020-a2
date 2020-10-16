@@ -44,7 +44,7 @@ function Login() {
                 <div className="login__inputs">
                     <TextField style={{backgroundColor: errorSign ? "#ffe6e6" : "white"}}  onChange={e=>setUserName(e.target.value)} required id="usernameInput" label="Username" type="text"/>
                     <TextField style={{backgroundColor: errorSign ? "#ffe6e6" : "white"}}  onChange={e=>setPassword(e.target.value)} required id="passwordInput" label="Password" type="password"/>
-                    <p>{message}</p>
+                    <p style={{color: 'red'}}>{message}</p>
                     <p>Do not have an account? <a href="/register">Register here!</a></p>
                     <Button variant="outlined" color="primary" style={{marginBottom: 10}} onClick={logIn}>Log In</Button>
                 </div>
