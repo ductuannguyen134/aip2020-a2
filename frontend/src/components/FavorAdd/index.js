@@ -9,10 +9,10 @@ import { useHistory } from 'react-router-dom';
 import axios from '../../hoc/axios';
 
 function FavorAdd(props) {
-    const {favorList} = props;
-    const [person, setPerson] = useState();
-    const [item, setItem] = useState();
-    const [itemNum, setItemNum] = useState();
+    const { handleAdd, onUpdate } = props
+    const [person, setPerson] = useState("");
+    const [item, setItem] = useState("");
+    const [itemNum, setItemNum] = useState(0);
     let history = useHistory();
     
     function handleChangePerson(e){
@@ -27,34 +27,67 @@ function FavorAdd(props) {
         setItemNum(e.target.value);
     }
 
-    function handleRemove(){
+    function handleRemove(event){
         alert("Removed");
     }
 
-    function handleAdd(){
-        alert("Added!");
+    function AddLine(event){
+        return(
+             <div className="favorAdd__chooseItems">
+                        <p>Items: </p>
+                        <Select
+                            id="chooseItem"
+                            value={item}
+                            onChange={handleChangeItem}
+                        >
+                            <MenuItem value="Chocolate">Chocolate</MenuItem>
+                            <MenuItem value="Coffee">Coffee</MenuItem>
+                            <MenuItem value="Candy">Candy</MenuItem>
+                            <MenuItem value="Tea">Tea</MenuItem>
+                        </Select>
+                        <Input
+                            className="favorAdd__itemNumber"
+                            value={itemNum}
+                            onChange={handleChangeItemNum}
+                            inputProps={{
+                                type: 'number',
+                                min: 0,
+                                max: 100,
+                            }}
+                        />
+                        <IconButton onClick={handleRemove}>
+                            <RemoveIcon />
+                        </IconButton>
+                    </div>
+        )
     }
 
-    function cancel(){
+    function cancel(e){
         history.push('/favors');
     }
-    const handleSubmit = (event) => 
+    
+    function handleSubmit(event) 
     {
         event.preventDefault();
         alert("Submitted!");
          const itemDetail = {
             name: item,
             quantity: itemNum
-        }
+        };
         const favor = {
-    // ownerID: "5f862b953d152a307c75cd05",
+    ownerID: "5f862b953d152a307c75cd05",
     // debtorID: "5f864281a9213334cb6592ec",
-    items: [itemDetail]}
+    debtorID: "5f86ec1cec72c8517e88b13d",
+    items: [itemDetail]};
     
     console.log(favor);
 
     axios.post("/api/favor/create", favor)
-      .then(res => console.log(res.data))
+      .then(res => 
+        {
+            console.log(res.data);
+            handleAdd(favor);
+        })
       .catch((err) => console.log(err));
         }
 
@@ -77,32 +110,8 @@ function FavorAdd(props) {
                             <MenuItem value="Thinh">Thinh</MenuItem>
                         </Select>
                     </div>
-                    <div className="favorAdd__chooseItems">
-                        <p>Items: </p>
-                        <Select
-                            id="chooseItem"
-                            value={item}
-                            onChange={handleChangeItem}
-                        >
-                            <MenuItem value="Chocolate">Chocolate</MenuItem>
-                            <MenuItem value="Coffee">Coffee</MenuItem>
-                            <MenuItem value="Candy">Candy</MenuItem>
-                            <MenuItem value="Tea">Tea</MenuItem>
-                        </Select>
-                        <Input
-                            className="favorAdd__itemNumber"
-                            onChange={handleChangeItemNum}
-                            inputProps={{
-                                type: 'number',
-                                min: 0,
-                                max: 100,
-                            }}
-                        />
-                        <IconButton onClick={handleRemove}>
-                            <RemoveIcon />
-                        </IconButton>
-                    </div>
-                    <IconButton onClick={handleAdd}>
+                    {AddLine()}
+                    <IconButton onClick={AddLine()}>
                         <AddIcon />
                     </IconButton> 
                 </div>
@@ -113,7 +122,7 @@ function FavorAdd(props) {
                     </div>
                     <div className="favorAdd__buttons">
                         <Button onClick={handleSubmit}>Create Favor</Button>
-                        <Button onClick={cancel}>Cancel</Button>
+                        <Button onClick={cancel}>Close</Button>
                     </div>
                 </div>
             </div>

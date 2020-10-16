@@ -6,7 +6,7 @@ const validateRequestInput = require('../../validation/request');
 
 router.get('/', (req, res) => {
     Request.find({})
-      .populate('requestFavors.from')
+      //.populate('requestFavors.from').exec()
       .then((requests) => res.status(200).json(requests))
       .catch((err) =>
         res.status(400).json({ user: 'Error fetching requests of logged in user!' })
