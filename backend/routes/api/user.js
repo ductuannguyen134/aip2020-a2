@@ -6,6 +6,7 @@ const SECRET = process.env.SECRET;
 const validateSignupInput = require("../../validation/signup");
 const validateLoginInput = require("../../validation/login");
 const User = require("../../models/User");
+const passport = require("passport");
 
 // Signup Route
 router.post("/signup", (req, res) => {
@@ -94,5 +95,13 @@ router.get("/users", (req, res) => {
     if (users.length != "undefined") return res.status(200).json(users);
   });
 });
+
+router.get(
+  "/verify",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send("Session available");
+  }
+);
 
 module.exports = router;
