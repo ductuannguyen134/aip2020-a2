@@ -23,6 +23,8 @@ import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext";
 
 function Favors() {
+  const DEFAULT_IMG =
+    "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();
   const [favorList, setFavorList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -44,12 +46,7 @@ function Favors() {
       axios
         .patch(`api/favor/update/${id}`)
         .then((res) => {
-          console.log(res.data);
-          setFavorList(
-            favorList.map((favor) =>
-              favor._id === id ? { ...favor, isComplete: true } : favor
-            )
-          );
+          window.location.reload();
         })
         .catch((error) => console.log(error));
     }
@@ -64,8 +61,7 @@ function Favors() {
       axios
         .delete(`api/favor/delete/${id}`)
         .then((res) => {
-          console.log(res.data);
-          setFavorList(favorList.filter((favor) => favor._id !== id));
+          window.location.reload();
         })
         .catch((error) => console.log(error));
     }
@@ -109,32 +105,53 @@ function Favors() {
                 favorList.map((favor) => (
                   <TableRow key={favor._id}>
                     <TableCell component="th" scope="row">
-                      {favor.items.map((item) => (
-                        <>
-                          <p>
-                            {item.quantity} {item.name}
-                          </p>
-                        </>
-                      ))}
+                      <p>
+                        {favor.items.map((item) => (
+                          <span>
+                            {item.quantity} {item.id.prize}{" "}
+                          </span>
+                        ))}
+                      </p>
                     </TableCell>
                     <TableCell align="right">
                       {favor.debtorID.userName}
                     </TableCell>
                     <TableCell align="right">
-                      {favor.isComplete ? "Completed" : "Uncompleted"}
+                      {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
                     </TableCell>
-                    <TableCell align="right">{favor.createdImage}</TableCell>
-                    <TableCell align="right">{favor.completedImage}</TableCell>
                     <TableCell align="right">
-                      <ButtonGroup
-                        variant="contained"
-                        color="primary"
-                        aria-label="contained primary button group"
-                      >
-                        <Button onClick={(e) => handleComplete(favor._id)}>
-                          Complete
-                        </Button>
-                      </ButtonGroup>
+                      <img
+                        src={
+                          favor.createdImage ? favor.createdImage : DEFAULT_IMG
+                        }
+                        width={100}
+                        height={100}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <img
+                        src={
+                          favor.completedImage
+                            ? favor.completedImage
+                            : DEFAULT_IMG
+                        }
+                        width={100}
+                        height={100}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {!favor.isComplete && (
+                        <ButtonGroup
+                          variant="contained"
+                          color="primary"
+                          aria-label="contained primary button group"
+                        >
+                          <Button onClick={(e) => handleComplete(favor._id)}>
+                            Complete
+                          </Button>
+                        </ButtonGroup>
+                      )}
+
                       <ButtonGroup variant="contained" color="secondary">
                         <Button onClick={(e) => handleDelete(favor._id)}>
                           Delete
