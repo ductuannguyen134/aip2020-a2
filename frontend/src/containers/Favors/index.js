@@ -23,13 +23,13 @@ function Favors() {
     // Retrieve a list of Favor for the user
     useEffect(() => {
         console.log(user.userID);
-    async function fetchData(userID) {
-      const response = await axios.get(`/api/favor/user/${userID}`);
-      setFavorList(response.data);
-    }
-    fetchData(user.userID).catch((error)=>{
-            console.log(error);
-        });
+        async function fetchData(userID) {
+        const response = await axios.get(`/api/favor/user/${userID}`);
+        setFavorList(response.data);
+        }
+        fetchData(user.userID).catch((error)=>{
+                console.log(error);
+            });
     }, []);
     
     function handleComplete(id){
@@ -48,7 +48,7 @@ function Favors() {
         setFavorList([...favorList, favor]);
     };
 
-  function handleDelete(id) {
+    function handleDelete(id) {
       if(window.confirm("Do you want to delete this favor?")){
             axios.delete(`api/favor/delete/${id}`)
             .then(res => 
