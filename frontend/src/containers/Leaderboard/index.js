@@ -1,7 +1,7 @@
 import React from 'react';
 import {Container, TextField, Button, ButtonGroup} from '@material-ui/core';
 import { Link, Route, useHistory } from 'react-router-dom';
-import {useUserStatus} from '../../hoc/UserContext';
+import {useUserStatus} from '../../hoc/UserContext/UserContext';
 import Active from '../../components/Active';
 import DebtsLeaderboard from '../../components/DebtsLeaderboard';
 import "./styles.css";

@@ -12,7 +12,7 @@ import './style.css';
 import AddIcon from '@material-ui/icons/Add';
 import FavorAdd from '../../components/FavorAdd';
 import axios from '../../hoc/axios';
-import {useUserStatus} from '../../hoc/UserContext';
+import {useUserStatus} from '../../hoc/UserContext/UserContext';
 
 function Favors() {
     const [{user}, dispatch] = useUserStatus();

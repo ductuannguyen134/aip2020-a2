@@ -3,8 +3,8 @@ import {Container, TextField, Button} from '@material-ui/core';
 import './style.css';
 import { Link, useHistory } from 'react-router-dom';
 import axios from '../../hoc/axios';
-import {useUserStatus} from '../../hoc/UserContext';
-import {ACTIONS} from '../../hoc/reducer';
+import {useUserStatus} from '../../hoc/UserContext/UserContext';
+import {ACTIONS} from '../../hoc/UserContext/reducer';
 
 function Login() {
 

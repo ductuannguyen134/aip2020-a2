@@ -2,8 +2,8 @@ import { AccordionActions, Button, Container, TextField } from '@material-ui/cor
 import React, {useState} from 'react'
 import './style.css'
 import axios from '../../hoc/axios'
-import {useUserStatus} from '../../hoc/UserContext'
-import {ACTIONS} from '../../hoc/reducer'
+import {useUserStatus} from '../../hoc/UserContext/UserContext'
+import {ACTIONS} from '../../hoc/UserContext/reducer'
 import { Redirect, useHistory } from 'react-router-dom'
 
 function Register() {
