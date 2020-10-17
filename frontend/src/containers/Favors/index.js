@@ -113,7 +113,7 @@ function Favors() {
                 <TableCell align="right">Status</TableCell>
                 <TableCell align="right">Initial Proof</TableCell>
                 <TableCell align="right">Resolved Proof</TableCell>
-                <TableCell align="right">Action</TableCell>
+                <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
