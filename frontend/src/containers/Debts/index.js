@@ -21,7 +21,7 @@ import ResolveDebt from "../../components/ResolveDebt";
 import DebtAdd from "../../components/DebtAdd";
 import AddIcon from "@material-ui/icons/Add";
 import axios from "../../hoc/axios";
-import { useUserStatus } from "../../hoc/UserContext";
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
 
 function Debts() {
   const DEFAULT_IMG =

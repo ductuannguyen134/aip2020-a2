@@ -6,7 +6,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import axios from "../../hoc/axios";
-import { useUserStatus } from "../../hoc/UserContext";
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
 
 function ResolveDebts(props) {
   const DEFAULT_IMG =

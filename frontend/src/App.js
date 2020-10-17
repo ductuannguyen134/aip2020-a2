@@ -10,7 +10,7 @@ import Favors from './containers/Favors';
 import Debts from './containers/Debts';
 
 //import user context
-import {useUserStatus} from './hoc/UserContext';
+import {useUserStatus} from './hoc/UserContext/UserContext';
 
 function App() {
 

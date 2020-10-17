@@ -7,7 +7,7 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
 import axios from "../../hoc/axios";
-import { useUserStatus } from "../../hoc/UserContext";
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
 
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";

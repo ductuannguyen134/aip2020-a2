@@ -15,13 +15,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { Link, Route, useHistory } from "react-router-dom";
-import { useUserStatus } from "../../hoc/UserContext";
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import AddIcon from "@material-ui/icons/Add";
 import "./style.css";
 import axios from "../../hoc/axios";
 import RequestAdd from "../../components/RequestAdd";
 import PrizeAdd from "../../components/PrizeAdd";
 import ResolveModal from "../../components/ResolveModal";
+import {useLoading} from "../../hoc/LoadingContext/LoadingContext";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -31,6 +32,7 @@ function Home() {
   const [openAddRw, setOpenAddRw] = useState(false);
   const [openResolve, setOpenReolve] = useState(false);
   const [selectRequest, setSelectRequest] = useState();
+  const [loading, setLoading] = useLoading();
 
   useEffect(() => {
     async function fetchData() {
@@ -111,7 +113,8 @@ function Home() {
     <Button
       variant="contained"
       color="secondary"
-      onClick={() => handleDeleteClick(id)}
+      // onClick={() => handleDeleteClick(id)}
+      onClick={() => {if(window.confirm('Are you sure to delete this record?')){handleDeleteClick(id)};}}
     >
       Delete
     </Button>
@@ -132,6 +135,9 @@ function Home() {
     <div className="home">
       <div className="home__data">
         <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
+          
+          <button onClick={() => setLoading((prev)=>!prev)}>Change loading state</button>
+          
           <div className="request__add">
             <h1>Active public requests</h1>
             <IconButton onClick={handleClickOpen}>
