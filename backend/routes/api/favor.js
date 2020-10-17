@@ -40,7 +40,11 @@ router.patch(
   "/update/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    Favor.update({ _id: req.params.id }, { $set: { isComplete: true } })
+    const imageURL = req.body ? req.body.img : null;
+    Favor.update(
+      { _id: req.params.id },
+      { $set: { isComplete: true, completedImage: imageURL } }
+    )
       .populate("ownerID", "userName")
       .populate({ path: "items.id", select: "prize" })
       .exec()
@@ -64,8 +68,15 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     Favor.find({ debtorID: req.user._id })
+      .populate("ownerID", "userName")
+      .populate({ path: "items.id", select: "prize" })
+      .exec()
       .then((data) => res.send(data))
       .catch((err) => res.send(err));
   }
 );
+
+//Resolve debt
+router.patch("/debt/resolve/:id");
+
 module.exports = router;

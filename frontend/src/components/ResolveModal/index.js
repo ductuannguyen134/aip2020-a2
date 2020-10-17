@@ -66,7 +66,10 @@ const ResolveModal = (props) => {
       <DialogContent>
         <img src={url} width={400} height={400} />
         <br />
-        <input type="file" onChange={(e) => handleUpload(e)} />
+        <Input
+          inputProps={{ type: "file" }}
+          onChange={(e) => handleUpload(e)}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleResolve} color="primary" variant="contained">
