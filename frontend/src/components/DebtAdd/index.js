@@ -12,7 +12,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
-function FavorAdd(props) {
+function DebtAdd(props) {
   const [{ user }, dispatch] = useUserStatus();
   const [users, setUsers] = useState([]);
   const [items, setItems] = useState([]);
@@ -74,7 +74,7 @@ function FavorAdd(props) {
   }
 
   function cancel(e) {
-    history.push("/favors");
+    history.push("/debts");
   }
 
   const handleUpload = (event) => {
@@ -82,53 +82,73 @@ function FavorAdd(props) {
     setProof(event.target.files[0]);
   };
 
-  function handleSubmit(event) {
-    if (!person || (inputList.length == 1 && inputList[0].id == "") || !proof) {
-      alert("Please insert all fields");
+  const handleSubmit = () => {
+    if (!person || (inputList.length == 1 && inputList[0].id == "")) {
+      alert("Please insert all required fields");
     } else {
-      let createdImage;
+      if (proof) {
+        let createdImage;
 
-      const fd = new FormData();
-      fd.append("image", proof, proof.name);
+        const fd = new FormData();
+        fd.append("image", proof, proof.name);
 
-      axios
-        .post("https://api.imgur.com/3/upload", fd, {
-          headers: {
-            Authorization: "Client-ID 2d41554ce8617a3",
-          },
-        })
-        .then((res) => {
-          createdImage = res.data.data.link;
-          const params = {
-            ownerID: user.userID,
-            debtorID: person,
-            items: [...inputList],
-            createdImage: createdImage,
-          };
+        axios
+          .post("https://api.imgur.com/3/upload", fd, {
+            headers: {
+              Authorization: "Client-ID 2d41554ce8617a3",
+            },
+          })
+          .then((res) => {
+            createdImage = res.data.data.link;
+            const params = {
+              ownerID: person,
+              debtorID: user.userID,
+              items: [...inputList],
+              createdImage: createdImage,
+            };
 
-          axios
-            .post("/api/favor/create", params, {
-              headers: {
-                Authorization: user.token,
-              },
-            })
-            .then(() => {
-              window.location.reload();
-            })
-            .catch((err) => alert(err));
-        })
-        .catch((err) => alert(err));
+            axios
+              .post("/api/favor/create", params, {
+                headers: {
+                  Authorization: user.token,
+                },
+              })
+              .then(() => {
+                window.location.reload();
+              })
+              .catch((err) => alert(err));
+          })
+          .catch((err) => alert(err));
+      } else {
+        const params = {
+          ownerID: person,
+          debtorID: user.userID,
+          items: [...inputList],
+        };
+
+        axios
+          .post("/api/favor/create", params, {
+            headers: {
+              Authorization: user.token,
+            },
+          })
+          .then(() => {
+            window.location.reload();
+          })
+          .catch((err) => alert(err));
+      }
     }
-  }
+  };
 
   return (
     <div className="favorAdd">
-      <h1>Add favor for you</h1>
-      <p style={{ color: "red" }}>All fields are required</p>
+      <h1>Add debt of you</h1>
       <div className="favorAdd__body">
         <div className="favorAdd__left">
           <div className="favorAdd__chooseFrom">
-            <p>From: </p>
+            <p>
+              To: <span style={{ color: "red" }}>(Required)</span>
+            </p>
             <Select
               id="choosePerson"
               value={person}
@@ -142,7 +162,9 @@ function FavorAdd(props) {
               ))}
             </Select>
           </div>
-          <p>Items: </p>
+          <p>
+            Items: <span style={{ color: "red" }}>(Required)</span>
+          </p>
           {inputList.map((item, index) => {
             return (
               <div>
@@ -188,14 +210,14 @@ function FavorAdd(props) {
         </div>
         <div className="favorAdd__right">
           <div className="favorAdd__proof">
-            <p>Proof</p>
+            <p>Proof (Optional)</p>
             <img src={img ? img : DEFAULT_IMG} width={200} height={200} />
             <br />
             <Input onChange={handleUpload} inputProps={{ type: "file" }} />
           </div>
           <div className="favorAdd__buttons">
             <Button onClick={handleSubmit} color="primary" variant="contained">
-              Create Favor
+              Create Debt
             </Button>
           </div>
         </div>
@@ -204,4 +226,4 @@ function FavorAdd(props) {
   );
 }
 
-export default FavorAdd;
+export default DebtAdd;

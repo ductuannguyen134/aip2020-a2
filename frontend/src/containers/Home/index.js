@@ -143,7 +143,6 @@ function Home() {
             <IconButton onClick={handleClickOpen}>
               <AddIcon />
             </IconButton>
-            <span>(Create Request)</span>
           </div>
           <TableContainer component={Paper}>
             <Table className="table" aria-label="simple table">
@@ -152,7 +151,7 @@ function Home() {
                   <TableCell>Requests</TableCell>
                   <TableCell align="right">Rewards</TableCell>
                   <TableCell align="right">From</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell align="right"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

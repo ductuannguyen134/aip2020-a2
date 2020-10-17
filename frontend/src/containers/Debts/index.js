@@ -1,89 +1,178 @@
-import React, {useState} from 'react';
-import {Container, TextField, Button, ButtonGroup, IconButton, Dialog, DialogTitle} from '@material-ui/core';
-import { Link, Route, useHistory } from 'react-router-dom';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  TextField,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Dialog,
+  DialogTitle,
+} from "@material-ui/core";
+import { Link, Route, useHistory } from "react-router-dom";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 import "./styles.css";
-import ResolveDebt from '../../components/ResolveDebt';
+import ResolveDebt from "../../components/ResolveDebt";
+import DebtAdd from "../../components/DebtAdd";
+import AddIcon from "@material-ui/icons/Add";
+import axios from "../../hoc/axios";
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
 
 function Debts() {
+  const DEFAULT_IMG =
+    "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
+  const [isComplete, setIsComplete] = useState(false);
+  const [debtList, setDebtList] = useState([]);
+  const [{ user }, dispatch] = useUserStatus();
+  const [openResolve, setOpenResolve] = useState(false);
+  const [selectDebt, setSelectDebt] = useState();
+  const [openAdd, setOpenAdd] = useState(false);
 
-    const [isComplete, setIsComplete] = useState(false);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await axios.get("/api/favor/debt", {
+        headers: {
+          Authorization: user.token,
+        },
+      });
 
-    function createData(favors, to, status, initialProof, resolvedProof) {
-        return { favors, to, status, initialProof, resolvedProof};
+      setDebtList(response.data);
     }
-      
-    const rows = [
-        createData(['clean the table, wash the car'], 'Tuan', true, 'abc.jpg', 'syx.jpg'),
-        createData(['clean the fridge'], 'Duc', false, 'abc1.jpg', 'syx1.jpg'),
-        createData(['Wash the dish, Fix the door'], 'Hailey', false, 'abc2.jpg', 'syx2.jpg'),
-        createData(['Wash the car'], 'Thinh', true, 'abc3.jpg', 'syx3.jpg')
-    ];
 
-    function handleClickOpen(e) {
-        setOpen(true);
-      };
-    
-    function handleClose (e) {
-        setOpen(false);
-        history.push("/debts");
-    };    
+    fetchData();
+  }, []);
 
-    const [open, setOpen] = useState(false);
-    let history = useHistory();
+  let history = useHistory();
 
-    return (
-        <div className="debts">
-            <Container fixed style={{backgroundColor: '#ffffff', padding: 50}}>
-                <h1>Your Debts</h1>
-                <div className="debts-body">
-                <TableContainer component={Paper}>
-                        <Table className="table" aria-label="simple table">
-                            <TableHead>
-                            <TableRow>
-                                <TableCell>Favors</TableCell>
-                                <TableCell align="right">To</TableCell>
-                                <TableCell align="right">Status</TableCell>
-                                <TableCell align="right">Initial Proof</TableCell>
-                                <TableCell align="right">Resolved Proof</TableCell>
-                                <TableCell align="right"></TableCell>
-                            </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.map((row, index) => (
-                                    <TableRow key={index}>
-                                    <TableCell component="th" scope="row">
-                                        {row.favors}
-                                    </TableCell>
-                                    <TableCell align="right">{row.to}</TableCell>
-                                    <TableCell align="right">{row.status ? "Completed" : "Uncompleted"}</TableCell>
-                                    <TableCell align="right">{row.initialProof}</TableCell>
-                                    <TableCell align="right">{row.resolvedProof}</TableCell>
-                                    <TableCell align="right">
-                                        {!row.status && <Link to="/debts/resolve"><Button variant="contained" color="primary" onClick={handleClickOpen}>Resolve</Button></Link>}
-                                    </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-            </Container>
+  return (
+    <div className="debts">
+      <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
+        <div className="favor__heading">
+          <h1>Your Debts</h1>
 
-            {/* Route to resolve debts */}
-            <Route path="/debts/resolve">
-                <Dialog maxWidth="lg" open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                    <ResolveDebt />
-                </Dialog>
-            </Route>
+          <IconButton
+            onClick={() => {
+              setOpenAdd(true);
+            }}
+          >
+            <AddIcon />
+          </IconButton>
         </div>
-    )
+        <div className="debts-body">
+          <TableContainer component={Paper}>
+            <Table className="table" aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Favors</TableCell>
+                  <TableCell align="right">To</TableCell>
+                  <TableCell align="right">Status</TableCell>
+                  <TableCell align="right">Initial Proof</TableCell>
+                  <TableCell align="right">Resolved Proof</TableCell>
+                  <TableCell align="right"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {debtList.length > 0 ? (
+                  debtList.map((favor) => (
+                    <TableRow key={favor._id}>
+                      <TableCell component="th" scope="row">
+                        <p>
+                          {favor.items.map((item) => (
+                            <span>
+                              {item.quantity} {item.id.prize}{" "}
+                            </span>
+                          ))}
+                        </p>
+                      </TableCell>
+                      <TableCell align="right">
+                        {favor.ownerID.userName}
+                      </TableCell>
+                      <TableCell align="right">
+                        {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
+                      </TableCell>
+                      <TableCell align="right">
+                        <img
+                          src={
+                            favor.createdImage
+                              ? favor.createdImage
+                              : DEFAULT_IMG
+                          }
+                          width={100}
+                          height={100}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        <img
+                          src={
+                            favor.completedImage
+                              ? favor.completedImage
+                              : DEFAULT_IMG
+                          }
+                          width={100}
+                          height={100}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {!favor.isComplete && (
+                          <ButtonGroup
+                            variant="contained"
+                            color="primary"
+                            aria-label="contained primary button group"
+                          >
+                            <Button
+                              onClick={() => {
+                                setOpenResolve(true);
+                                setSelectDebt(favor);
+                              }}
+                            >
+                              Resolve
+                            </Button>
+                          </ButtonGroup>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell align="center" colSpan={12}>
+                      No debt has been added
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </Container>
+
+      <Dialog
+        maxWidth="lg"
+        open={openResolve}
+        onClose={() => {
+          setOpenResolve(false);
+        }}
+        aria-labelledby="form-dialog-title"
+      >
+        <ResolveDebt debt={selectDebt} />
+      </Dialog>
+
+      <Dialog
+        maxWidth="lg"
+        open={openAdd}
+        onClose={() => {
+          setOpenAdd(false);
+        }}
+        aria-labelledby="form-dialog-title"
+      >
+        <DebtAdd />
+      </Dialog>
+    </div>
+  );
 }
 
-export default Debts
+export default Debts;
