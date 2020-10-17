@@ -18,6 +18,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import "./styles.css";
 import ResolveDebt from "../../components/ResolveDebt";
+import DebtAdd from "../../components/DebtAdd";
 import AddIcon from "@material-ui/icons/Add";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext";
@@ -30,6 +31,7 @@ function Debts() {
   const [{ user }, dispatch] = useUserStatus();
   const [openResolve, setOpenResolve] = useState(false);
   const [selectDebt, setSelectDebt] = useState();
+  const [openAdd, setOpenAdd] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -45,15 +47,6 @@ function Debts() {
     fetchData();
   }, []);
 
-  //   function handleClickOpen(e) {
-  //     setOpen(true);
-  //   }
-
-  //   function handleClose(e) {
-  //     setOpen(false);
-  //     history.push("/debts");
-  //   }
-
   let history = useHistory();
 
   return (
@@ -61,7 +54,12 @@ function Debts() {
       <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
         <div className="favor__heading">
           <h1>Your Debts</h1>
-          <IconButton onClick={() => {}}>
+
+          <IconButton
+            onClick={() => {
+              setOpenAdd(true);
+            }}
+          >
             <AddIcon />
           </IconButton>
         </div>
@@ -161,6 +159,17 @@ function Debts() {
         aria-labelledby="form-dialog-title"
       >
         <ResolveDebt debt={selectDebt} />
+      </Dialog>
+
+      <Dialog
+        maxWidth="lg"
+        open={openAdd}
+        onClose={() => {
+          setOpenAdd(false);
+        }}
+        aria-labelledby="form-dialog-title"
+      >
+        <DebtAdd />
       </Dialog>
     </div>
   );
