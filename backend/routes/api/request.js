@@ -61,27 +61,32 @@ router.post(
   }
 );
 
-// router.patch(
-//   "/update/:id",
-//   passport.authenticate("jwt", { session: false }),
-//   (req, res) => {
-//     const user = req.user.user_name;
-//     const { errors, isValid } = validateRequestInput(req.body);
-//     if (!isValid) {
-//       return res.status(400).json(errors);
-//     }
-//     const { title, body } = req.body;
-//     Request.findOneAndUpdate(
-//       { user, _id: req.params.id },
-//       { $set: { title, body } },
-//       { new: true }
-//     )
-//       .then((doc) => res.status(200).json(doc))
-//       .catch((err) =>
-//         res.status(400).json({ update: "Error updating existing request" })
-//       );
-//   }
-// );
+router.patch(
+  "/update/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const userID = req.user._id;
+    let request = undefined;
+
+    request = await Request.findOne({ _id: req.params.id });
+
+    const requestFavors = [
+      ...request.requestFavors,
+      { from: userID, rewards: [...req.body.rewards] },
+    ];
+
+    try {
+      const result = await Request.findOneAndUpdate(
+        { _id: req.params.id },
+        { requestFavors: requestFavors }
+      );
+
+      res.status(200).send(result);
+    } catch (err) {
+      res.send(err);
+    }
+  }
+);
 
 router.delete(
   "/delete/:id",

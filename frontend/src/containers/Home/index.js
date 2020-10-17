@@ -78,8 +78,12 @@ function Home() {
         variant="contained"
         color="default"
         onClick={() => {
-          setOpenAddRw(true);
-          setSelectRequest(request);
+          if (user) {
+            setOpenAddRw(true);
+            setSelectRequest(request);
+          } else {
+            history.push(!user && "/login");
+          }
         }}
       >
         Add Rewards

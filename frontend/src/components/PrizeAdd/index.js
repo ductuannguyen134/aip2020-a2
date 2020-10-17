@@ -9,9 +9,11 @@ import { useUserStatus } from "../../hoc/UserContext";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import { useHistory } from "react-router-dom";
 
 const PrizeAdd = (props) => {
   const content = props.request.requestContent;
+  const history = useHistory();
 
   const [{ user }, dispatch] = useUserStatus();
   const [prizes, setPrize] = useState([]);
@@ -52,6 +54,29 @@ const PrizeAdd = (props) => {
     const list = [...items];
     list.splice(index, 1);
     setItems(list);
+  };
+
+  const addPrize = () => {
+    if (user) {
+      let res;
+      try {
+        axios.patch(
+          `/api/request/update/${props.request._id}`,
+          { rewards: [...items] },
+          {
+            headers: {
+              Authorization: user.token,
+            },
+          }
+        );
+      } catch (err) {
+        alert(err);
+      }
+    } else {
+      history.push(!user && "/login");
+    }
+
+    window.location.reload();
   };
 
   return (
@@ -101,11 +126,7 @@ const PrizeAdd = (props) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={() => alert(props.request._id)}
-          color="primary"
-          variant="contained"
-        >
+        <Button onClick={addPrize} color="primary" variant="contained">
           Add rewards
         </Button>
       </DialogActions>
