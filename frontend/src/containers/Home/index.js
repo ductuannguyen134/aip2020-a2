@@ -21,6 +21,7 @@ import "./style.css";
 import axios from "../../hoc/axios";
 import RequestAdd from "../../components/RequestAdd";
 import PrizeAdd from "../../components/PrizeAdd";
+import ResolveModal from "../../components/ResolveModal";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -28,6 +29,7 @@ function Home() {
   const history = useHistory();
   const [open, setOpen] = useState(false);
   const [openAddRw, setOpenAddRw] = useState(false);
+  const [openResolve, setOpenReolve] = useState(false);
   const [selectRequest, setSelectRequest] = useState();
 
   useEffect(() => {
@@ -92,7 +94,12 @@ function Home() {
         variant="contained"
         color="primary"
         onClick={() => {
-          history.push(!user && "/login");
+          if (user) {
+            setOpenReolve(true);
+            setSelectRequest(request);
+          } else {
+            history.push(!user && "/login");
+          }
         }}
       >
         Resolve
@@ -201,6 +208,15 @@ function Home() {
           }}
         >
           <PrizeAdd request={selectRequest} />
+        </Dialog>
+        <Dialog
+          open={openResolve}
+          onClose={() => {
+            setOpenReolve(false);
+            history.push("/");
+          }}
+        >
+          <ResolveModal request={selectRequest} />
         </Dialog>
       </div>
     </div>

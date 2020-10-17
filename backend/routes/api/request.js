@@ -135,4 +135,27 @@ router.delete(
   }
 );
 
+router.patch(
+  "/resolve/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    imageURL = req.body.img;
+    userID = req.user._id;
+
+    Request.findOneAndUpdate(
+      { _id: req.params.id },
+      { resolverID: userID, resolverProof: imageURL }
+    )
+      .then((doc) => {
+        res.send(doc);
+      })
+      .catch((err) => res.send(err));
+
+    //TODO implement add Favor
+
+    //TODO implement increase completed request
+    //TODO add completed_request to USER model
+  }
+);
+
 module.exports = router;
