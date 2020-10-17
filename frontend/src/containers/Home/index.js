@@ -20,12 +20,15 @@ import AddIcon from "@material-ui/icons/Add";
 import "./style.css";
 import axios from "../../hoc/axios";
 import RequestAdd from "../../components/RequestAdd";
+import PrizeAdd from "../../components/PrizeAdd";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
   const [requests, setRequests] = useState([]);
   const history = useHistory();
   const [open, setOpen] = useState(false);
+  const [openAddRw, setOpenAddRw] = useState(false);
+  const [selectRequest, setSelectRequest] = useState();
 
   useEffect(() => {
     async function fetchData() {
@@ -69,13 +72,14 @@ function Home() {
     window.location.reload();
   };
 
-  const buttonGroup = (
+  const buttonGroup = (request) => (
     <ButtonGroup aria-label="contained primary button group">
       <Button
         variant="contained"
         color="default"
         onClick={() => {
-          history.push(!user && "/login");
+          setOpenAddRw(true);
+          setSelectRequest(request);
         }}
       >
         Add Rewards
@@ -164,10 +168,10 @@ function Home() {
                     </TableCell>
                     <TableCell align="right">
                       {!user
-                        ? buttonGroup
+                        ? buttonGroup(request)
                         : verifyUser(user.userID, request.requestFavors)
                         ? buttonDelete(request["_id"])
-                        : buttonGroup}
+                        : buttonGroup(request)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -184,6 +188,15 @@ function Home() {
           aria-labelledby="form-dialog-title"
         >
           <RequestAdd />
+        </Dialog>
+        <Dialog
+          open={openAddRw}
+          onClose={() => {
+            setOpenAddRw(false);
+            history.push("/");
+          }}
+        >
+          <PrizeAdd request={selectRequest} />
         </Dialog>
       </div>
     </div>

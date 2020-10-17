@@ -15,23 +15,23 @@ router.get("/", (req, res) => {
     .catch((err) => res.status(400).send(err));
 });
 
-router.get("/request/:id", (req, res) => {
-  Request.find({ _id: req.params.id })
-    .then((request) => res.status(200).json(request))
-    .catch((err) =>
-      res.status(400).json({ id: "Error fetching request by id!" })
-    );
-});
+// router.get("/request/:id", (req, res) => {
+//   Request.find({ _id: req.params.id })
+//     .then((request) => res.status(200).json(request))
+//     .catch((err) =>
+//       res.status(400).json({ id: "Error fetching request by id!" })
+//     );
+// });
 
-router.get("/user/:user", (req, res) => {
-  Request.find({ user: req.params.user })
-    .then((requests) => res.status(200).json(requests))
-    .catch((err) =>
-      res
-        .status(400)
-        .json({ user: "Error fetching requests of specific user!" })
-    );
-});
+// router.get("/user/:user", (req, res) => {
+//   Request.find({ user: req.params.user })
+//     .then((requests) => res.status(200).json(requests))
+//     .catch((err) =>
+//       res
+//         .status(400)
+//         .json({ user: "Error fetching requests of specific user!" })
+//     );
+// });
 
 router.post(
   "/create",
@@ -61,27 +61,27 @@ router.post(
   }
 );
 
-router.patch(
-  "/update/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    const user = req.user.user_name;
-    const { errors, isValid } = validateRequestInput(req.body);
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
-    const { title, body } = req.body;
-    Request.findOneAndUpdate(
-      { user, _id: req.params.id },
-      { $set: { title, body } },
-      { new: true }
-    )
-      .then((doc) => res.status(200).json(doc))
-      .catch((err) =>
-        res.status(400).json({ update: "Error updating existing request" })
-      );
-  }
-);
+// router.patch(
+//   "/update/:id",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     const user = req.user.user_name;
+//     const { errors, isValid } = validateRequestInput(req.body);
+//     if (!isValid) {
+//       return res.status(400).json(errors);
+//     }
+//     const { title, body } = req.body;
+//     Request.findOneAndUpdate(
+//       { user, _id: req.params.id },
+//       { $set: { title, body } },
+//       { new: true }
+//     )
+//       .then((doc) => res.status(200).json(doc))
+//       .catch((err) =>
+//         res.status(400).json({ update: "Error updating existing request" })
+//       );
+//   }
+// );
 
 router.delete(
   "/delete/:id",

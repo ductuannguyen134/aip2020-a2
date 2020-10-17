@@ -13,7 +13,7 @@ function RequestAdd() {
   const [{ user }, dispatch] = useUserStatus();
   const [request, setRequest] = useState();
   const [prizes, setPrize] = useState([]);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([{ id: "", quantity: 1 }]);
 
   useEffect(() => {
     const getPrizeList = async () => {
@@ -116,10 +116,7 @@ function RequestAdd() {
             <p>Items: </p>
             <div>
               {items.map((item, index) => (
-                <div
-                  className="req-chooseitem"
-                  key={item.id != null ? item.id : items.length}
-                >
+                <div className="req-chooseitem" key={index}>
                   <Select
                     id="chooseItem"
                     value={item.id}
@@ -140,9 +137,11 @@ function RequestAdd() {
                       max: 10,
                     }}
                   />
-                  <IconButton onClick={() => handleRemoveItem(index)}>
-                    <RemoveIcon />
-                  </IconButton>
+                  {items.length > 1 && (
+                    <IconButton onClick={() => handleRemoveItem(index)}>
+                      <RemoveIcon />
+                    </IconButton>
+                  )}
                 </div>
               ))}
             </div>
