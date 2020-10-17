@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import "./style.css";
@@ -7,12 +7,46 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
 import axios from "../../hoc/axios";
+import { useUserStatus } from "../../hoc/UserContext";
+
+const DEFAULT_IMG =
+  "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
 function FavorAdd(props) {
-  const { handleAdd, onUpdate } = props;
-  const [person, setPerson] = useState("");
-  const [inputList, setInputList] = useState([{ name: "", quantity: "" }]);
+  const [{ user }, dispatch] = useUserStatus();
+  const [users, setUsers] = useState([]);
+  const [items, setItems] = useState([]);
+  const [person, setPerson] = useState();
+  const [inputList, setInputList] = useState([{ id: "", quantity: 1 }]);
+  const [img, setImg] = useState();
+  const [proof, setProof] = useState();
   let history = useHistory();
+
+  useEffect(() => {
+    const getPrizeList = async () => {
+      const res = await axios.get("/api/prize/");
+      const items = res.data;
+
+      setItems(items);
+    };
+
+    const getUsersList = async () => {
+      const res = await axios.get("/api/user/users");
+      const data = res.data;
+
+      //REMOVE my ID
+      const myID = user.userID;
+      const idx = data.findIndex((user, index) => user["_id"] == myID);
+
+      const list = [...data];
+      list.splice(idx, 1);
+
+      setUsers(list);
+    };
+
+    getPrizeList();
+    getUsersList();
+  }, []);
 
   function handleChangePerson(e) {
     setPerson(e.target.value);
@@ -32,37 +66,82 @@ function FavorAdd(props) {
   }
 
   function handleAddInputField() {
-    setInputList([...inputList, { name: "", quantity: "" }]);
+    if (inputList.length < items.length) {
+      setInputList([...inputList, { id: "", quantity: 1 }]);
+    } else {
+      alert("Cant add more type of reward");
+    }
   }
 
   function cancel(e) {
     history.push("/favors");
   }
 
+  const handleUpload = (event) => {
+    setImg(URL.createObjectURL(event.target.files[0]));
+    setProof(event.target.files[0]);
+  };
+
   function handleSubmit(event) {
-    event.preventDefault();
-    alert("Submitted!");
-    const favor = {
-      ownerID: "5f862b953d152a307c75cd05",
-      // debtorID: "5f864281a9213334cb6592ec",
-      debtorID: "5f86ec1cec72c8517e88b13d",
-      items: inputList,
-    };
+    if (!person || (inputList.length == 1 && inputList[0].id == "") || !proof) {
+      alert("Please insert all fields");
+    } else {
+      let createdImage;
 
-    console.log(favor);
+      const fd = new FormData();
+      fd.append("image", proof, proof.name);
 
-    axios
-      .post("/api/favor/create", favor)
-      .then((res) => {
-        console.log(res.data);
-        handleAdd(favor);
-      })
-      .catch((err) => console.log(err));
+      axios
+        .post("https://api.imgur.com/3/upload", fd, {
+          headers: {
+            Authorization: "Client-ID 2d41554ce8617a3",
+          },
+        })
+        .then((res) => {
+          createdImage = res.data.data.link;
+          const params = {
+            ownerID: user.userID,
+            debtorID: person,
+            items: [...inputList],
+            createdImage: createdImage,
+          };
+
+          axios
+            .post("/api/favor/create", params, {
+              headers: {
+                Authorization: user.token,
+              },
+            })
+            .then(() => {
+              window.location.reload();
+            })
+            .catch((err) => alert(err));
+        })
+        .catch((err) => alert(err));
+    }
+
+    // event.preventDefault();
+    // alert("Submitted!");
+    // const favor = {
+    //   ownerID: "5f862b953d152a307c75cd05",
+    //   // debtorID: "5f864281a9213334cb6592ec",
+    //   debtorID: "5f86ec1cec72c8517e88b13d",
+    //   items: inputList,
+    // };
+    // console.log(favor);
+    // axios
+    //   .post("/api/favor/create", favor)
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     handleAdd(favor);
+    //   })
+    //   .catch((err) => console.log(err));
   }
 
   return (
     <div className="favorAdd">
       <h1>Add favor for you</h1>
+      <p style={{ color: "red" }}>All fields are required</p>
       <div className="favorAdd__body">
         <div className="favorAdd__left">
           <div className="favorAdd__chooseFrom">
@@ -73,28 +152,29 @@ function FavorAdd(props) {
               onChange={handleChangePerson}
               style={{ width: "20ch" }}
             >
-              <MenuItem value="Chris">Chris</MenuItem>
-              <MenuItem value="Hailey">Hailey</MenuItem>
-              <MenuItem value="Duc">Duc</MenuItem>
-              <MenuItem value="Thinh">Thinh</MenuItem>
+              {users.map((user, index) => (
+                <MenuItem value={user["_id"]} key={index}>
+                  {user["userName"]}
+                </MenuItem>
+              ))}
             </Select>
           </div>
-
+          <p>Items: </p>
           {inputList.map((item, index) => {
             return (
               <div>
                 <div className="favorAdd__chooseItems">
-                  <p>Items: </p>
                   <Select
                     id="chooseItem"
-                    name="name"
-                    value={item.name}
+                    name="id"
+                    value={item.id}
                     onChange={(e) => handleInputChange(e, index)}
                   >
-                    <MenuItem value="Chocolate">Chocolate</MenuItem>
-                    <MenuItem value="Coffee">Coffee</MenuItem>
-                    <MenuItem value="Candy">Candy</MenuItem>
-                    <MenuItem value="Tea">Tea</MenuItem>
+                    {items.map((prize, index) => (
+                      <MenuItem value={prize["_id"]} key={index}>
+                        {prize["prize"]}
+                      </MenuItem>
+                    ))}
                   </Select>
 
                   <Input
@@ -125,8 +205,10 @@ function FavorAdd(props) {
         </div>
         <div className="favorAdd__right">
           <div className="favorAdd__proof">
-            <p>Proof Required</p>
-            <Input inputProps={{ type: "file" }} />
+            <p>Proof</p>
+            <img src={img ? img : DEFAULT_IMG} width={200} height={200} />
+            <br />
+            <Input onChange={handleUpload} inputProps={{ type: "file" }} />
           </div>
           <div className="favorAdd__buttons">
             <Button onClick={handleSubmit}>Create Favor</Button>
