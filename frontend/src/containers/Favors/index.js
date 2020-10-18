@@ -20,13 +20,14 @@ import "./style.css";
 import AddIcon from "@material-ui/icons/Add";
 import FavorAdd from "../../components/FavorAdd";
 import axios from "../../hoc/axios";
-import {useUserStatus} from '../../hoc/UserContext/UserContext';
-
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
 function Favors() {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();
+  const [loading, setLoading] = useLoading();
   const [favorList, setFavorList] = useState([]);
   const [open, setOpen] = useState(false);
   let history = useHistory();
@@ -41,9 +42,11 @@ function Favors() {
       });
       setFavorList(response.data);
     }
+    setLoading((prev) => !prev);
     fetchData(user.userID).catch((error) => {
       console.log(error);
     });
+    setLoading((prev) => !prev);
   }, []);
 
   function handleComplete(id) {
@@ -196,7 +199,7 @@ function Favors() {
             onClose={handleClose}
             aria-labelledby="form-dialog-title"
           >
-            <FavorAdd handleAdd={handleAdd} />
+            <FavorAdd onFavorAdd={() => setOpen(false)} />
           </Dialog>
         </Route>
       </Container>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, IconButton, Input } from "@material-ui/core";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -11,6 +12,7 @@ const DEFAULT_IMG =
 
 const ResolveModal = (props) => {
   const [{ user }, dispatch] = useUserStatus();
+  const [loading, setLoading] = useLoading();
   const [url, setUrl] = useState(DEFAULT_IMG);
   const [img, setImg] = useState();
 
@@ -22,6 +24,8 @@ const ResolveModal = (props) => {
   const handleResolve = async () => {
     if (user) {
       if (img) {
+        props.onResolve();
+        setLoading((prev) => !prev);
         let res;
         let imgUrl;
 
@@ -46,10 +50,19 @@ const ResolveModal = (props) => {
                   },
                 }
               )
-              .then(() => window.location.reload())
-              .catch((err) => alert(err));
+              .then(() => {
+                setLoading((prev) => !prev);
+                window.location.reload();
+              })
+              .catch((err) => {
+                setLoading((prev) => !prev);
+                alert(err);
+              });
           })
-          .catch((err) => alert(err));
+          .catch((err) => {
+            setLoading((prev) => !prev);
+            alert(err);
+          });
       } else {
         alert("Please upload an image");
       }

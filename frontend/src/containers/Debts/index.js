@@ -22,6 +22,7 @@ import DebtAdd from "../../components/DebtAdd";
 import AddIcon from "@material-ui/icons/Add";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
 function Debts() {
   const DEFAULT_IMG =
@@ -29,6 +30,7 @@ function Debts() {
   const [isComplete, setIsComplete] = useState(false);
   const [debtList, setDebtList] = useState([]);
   const [{ user }, dispatch] = useUserStatus();
+  const [loading, setLoading] = useLoading();
   const [openResolve, setOpenResolve] = useState(false);
   const [selectDebt, setSelectDebt] = useState();
   const [openAdd, setOpenAdd] = useState(false);
@@ -43,8 +45,9 @@ function Debts() {
 
       setDebtList(response.data);
     }
-
+    setLoading((prev) => !prev);
     fetchData();
+    setLoading((prev) => !prev);
   }, []);
 
   let history = useHistory();
@@ -158,7 +161,12 @@ function Debts() {
         }}
         aria-labelledby="form-dialog-title"
       >
-        <ResolveDebt debt={selectDebt} />
+        <ResolveDebt
+          debt={selectDebt}
+          onResolve={() => {
+            setOpenResolve(false);
+          }}
+        />
       </Dialog>
 
       <Dialog
@@ -169,7 +177,11 @@ function Debts() {
         }}
         aria-labelledby="form-dialog-title"
       >
-        <DebtAdd />
+        <DebtAdd
+          onAdd={() => {
+            setOpenAdd(false);
+          }}
+        />
       </Dialog>
     </div>
   );

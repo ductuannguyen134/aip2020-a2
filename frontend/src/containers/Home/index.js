@@ -61,11 +61,12 @@ function Home() {
         }
       }
     }
-
+    setLoading((prev) => !prev);
     fetchData();
     if (user) {
       verifyUser();
     }
+    setLoading((prev) => !prev);
   }, []);
 
   function logout() {
@@ -166,10 +167,6 @@ function Home() {
     <div className="home">
       <div className="home__data">
         <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
-          <button onClick={() => setLoading((prev) => !prev)}>
-            Change loading state
-          </button>
-
           <div className="request__add">
             <h1>Active public requests</h1>
             <IconButton onClick={handleClickOpen}>
@@ -261,7 +258,10 @@ function Home() {
             history.push("/");
           }}
         >
-          <ResolveModal request={selectRequest} />
+          <ResolveModal
+            request={selectRequest}
+            onResolve={() => setOpenReolve(false)}
+          />
         </Dialog>
       </div>
     </div>
