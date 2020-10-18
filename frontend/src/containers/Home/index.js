@@ -22,7 +22,8 @@ import axios from "../../hoc/axios";
 import RequestAdd from "../../components/RequestAdd";
 import PrizeAdd from "../../components/PrizeAdd";
 import ResolveModal from "../../components/ResolveModal";
-import {useLoading} from "../../hoc/LoadingContext/LoadingContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import { ACTIONS } from "../../hoc/UserContext/reducer";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -45,8 +46,35 @@ function Home() {
           alert(error);
         });
     }
+
+    async function verifyUser() {
+      try {
+        const response = await axios.get("/api/user/verify", {
+          headers: {
+            Authorization: user.token,
+          },
+        });
+      } catch (err) {
+        if (err) {
+          alert("Your session is timeout. Please login again");
+          logout();
+        }
+      }
+    }
+
     fetchData();
+    if (user) {
+      verifyUser();
+    }
   }, []);
+
+  function logout() {
+    dispatch({
+      type: ACTIONS.SET_USER,
+      user: null,
+    });
+    history.push("/");
+  }
 
   const handleClickOpen = () => {
     if (user) {
@@ -113,8 +141,11 @@ function Home() {
     <Button
       variant="contained"
       color="secondary"
-      // onClick={() => handleDeleteClick(id)}
-      onClick={() => {if(window.confirm('Are you sure to delete this record?')){handleDeleteClick(id)};}}
+      onClick={() => {
+        if (window.confirm("Are you sure to delete this record?")) {
+          handleDeleteClick(id);
+        }
+      }}
     >
       Delete
     </Button>
@@ -135,9 +166,10 @@ function Home() {
     <div className="home">
       <div className="home__data">
         <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
-          
-          <button onClick={() => setLoading((prev)=>!prev)}>Change loading state</button>
-          
+          <button onClick={() => setLoading((prev) => !prev)}>
+            Change loading state
+          </button>
+
           <div className="request__add">
             <h1>Active public requests</h1>
             <IconButton onClick={handleClickOpen}>
