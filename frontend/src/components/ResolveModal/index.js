@@ -35,7 +35,7 @@ const ResolveModal = (props) => {
         axios
           .post("https://api.imgur.com/3/upload", fd, {
             headers: {
-              Authorization: "Client-ID 2d41554ce8617a3",
+              Authorization: "Client-ID 8fc1c1863ad18a9",
             },
           })
           .then((res) => {
