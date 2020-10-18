@@ -16,11 +16,7 @@ const userModel = {
   completedRequest: {
     type: Number,
     default: 0,
-  },
-  debt: {
-    type: Number,
-    default: 0,
-  },
+  }
 };
 
 const UserSchema = new Schema(userModel);

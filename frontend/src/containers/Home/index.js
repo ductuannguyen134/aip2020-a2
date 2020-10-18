@@ -187,42 +187,50 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {requests.map((request) => (
-                  <TableRow key={request._id}>
-                    <TableCell component="th" scope="row">
-                      {request.requestContent}
-                    </TableCell>
-                    <TableCell align="right">
-                      {request.requestFavors.map((favor) => (
-                        <p>
-                          {favor.rewards.map((reward) => (
-                            <span>
-                              {reward.quantity} {reward.id.prize}{" "}
-                            </span>
-                          ))}
-                        </p>
-                      ))}
-                    </TableCell>
-                    <TableCell align="right">
-                      {request.requestFavors.map((favor) => (
-                        <p>
-                          {user
-                            ? favor.from["_id"] != user.userID
-                              ? favor.from.userName
-                              : "You"
-                            : favor.from.userName}
-                        </p>
-                      ))}
-                    </TableCell>
-                    <TableCell align="right">
-                      {!user
-                        ? buttonGroup(request)
-                        : verifyUser(user.userID, request.requestFavors)
-                        ? buttonDelete(request["_id"])
-                        : buttonGroup(request)}
+                {requests.length > 0 ? (
+                  requests.map((request) => (
+                    <TableRow key={request._id}>
+                      <TableCell component="th" scope="row">
+                        {request.requestContent}
+                      </TableCell>
+                      <TableCell align="right">
+                        {request.requestFavors.map((favor) => (
+                          <p>
+                            {favor.rewards.map((reward) => (
+                              <span>
+                                {reward.quantity} {reward.id.prize}{" "}
+                              </span>
+                            ))}
+                          </p>
+                        ))}
+                      </TableCell>
+                      <TableCell align="right">
+                        {request.requestFavors.map((favor) => (
+                          <p>
+                            {user
+                              ? favor.from["_id"] != user.userID
+                                ? favor.from.userName
+                                : "You"
+                              : favor.from.userName}
+                          </p>
+                        ))}
+                      </TableCell>
+                      <TableCell align="right">
+                        {!user
+                          ? buttonGroup(request)
+                          : verifyUser(user.userID, request.requestFavors)
+                          ? buttonDelete(request["_id"])
+                          : buttonGroup(request)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell align="center" colSpan={12}>
+                      No active request has been added
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

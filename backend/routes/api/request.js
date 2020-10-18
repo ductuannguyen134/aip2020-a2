@@ -3,6 +3,8 @@ const router = express.Router();
 const Request = require("../../models/Request");
 const passport = require("passport");
 const validateRequestInput = require("../../validation/request");
+const User = require("../../models/User");
+const Favor = require("../../models/Favor");
 
 router.get("/", (req, res) => {
   Request.find({ resolverID: null })
@@ -139,6 +141,7 @@ router.patch(
   "/resolve/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
+    let favors;
     imageURL = req.body.img;
     userID = req.user._id;
 
@@ -146,15 +149,28 @@ router.patch(
       { _id: req.params.id },
       { resolverID: userID, resolverProof: imageURL }
     )
-      .then((doc) => {
+      .then(async (doc) => {
+        favors = doc.requestFavors;
+        favors.forEach((favor) => {
+          const params = {
+            ownerID: userID,
+            debtorID: favor.from,
+            items: [...favor.rewards],
+            createdImage: imageURL,
+          };
+
+          const newFavor = new Favor(params);
+          newFavor.save().catch((err) => res.status(400).json("Error: " + err));
+        });
+
+        User.findOneAndUpdate(
+          { _id: userID },
+          { $inc: { completedRequest: 1 } }
+        ).catch((err) => res.send(err));
+
         res.send(doc);
       })
       .catch((err) => res.send(err));
-
-    //TODO implement add Favor
-
-    //TODO implement increase completed request
-    //TODO add completed_request to USER model
   }
 );
 
