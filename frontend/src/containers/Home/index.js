@@ -24,6 +24,7 @@ import PrizeAdd from "../../components/PrizeAdd";
 import ResolveModal from "../../components/ResolveModal";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import { ACTIONS } from "../../hoc/UserContext/reducer";
+import TablePagination from "@material-ui/core/TablePagination";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -34,6 +35,8 @@ function Home() {
   const [openResolve, setOpenReolve] = useState(false);
   const [selectRequest, setSelectRequest] = useState();
   const [loading, setLoading] = useLoading();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     async function fetchData() {
@@ -163,6 +166,15 @@ function Home() {
     return temp > 0 ? true : false;
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <div className="home">
       <div className="home__data">
@@ -185,42 +197,44 @@ function Home() {
               </TableHead>
               <TableBody>
                 {requests.length > 0 ? (
-                  requests.map((request) => (
-                    <TableRow key={request._id}>
-                      <TableCell component="th" scope="row">
-                        {request.requestContent}
-                      </TableCell>
-                      <TableCell align="right">
-                        {request.requestFavors.map((favor) => (
-                          <p>
-                            {favor.rewards.map((reward) => (
-                              <span>
-                                {reward.quantity} {reward.id.prize}{" "}
-                              </span>
-                            ))}
-                          </p>
-                        ))}
-                      </TableCell>
-                      <TableCell align="right">
-                        {request.requestFavors.map((favor) => (
-                          <p>
-                            {user
-                              ? favor.from["_id"] != user.userID
-                                ? favor.from.userName
-                                : "You"
-                              : favor.from.userName}
-                          </p>
-                        ))}
-                      </TableCell>
-                      <TableCell align="right">
-                        {!user
-                          ? buttonGroup(request)
-                          : verifyUser(user.userID, request.requestFavors)
-                          ? buttonDelete(request["_id"])
-                          : buttonGroup(request)}
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  requests
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((request) => (
+                      <TableRow key={request._id}>
+                        <TableCell component="th" scope="row">
+                          {request.requestContent}
+                        </TableCell>
+                        <TableCell align="right">
+                          {request.requestFavors.map((favor) => (
+                            <p>
+                              {favor.rewards.map((reward) => (
+                                <span>
+                                  {reward.quantity} {reward.id.prize}{" "}
+                                </span>
+                              ))}
+                            </p>
+                          ))}
+                        </TableCell>
+                        <TableCell align="right">
+                          {request.requestFavors.map((favor) => (
+                            <p>
+                              {user
+                                ? favor.from["_id"] != user.userID
+                                  ? favor.from.userName
+                                  : "You"
+                                : favor.from.userName}
+                            </p>
+                          ))}
+                        </TableCell>
+                        <TableCell align="right">
+                          {!user
+                            ? buttonGroup(request)
+                            : verifyUser(user.userID, request.requestFavors)
+                            ? buttonDelete(request["_id"])
+                            : buttonGroup(request)}
+                        </TableCell>
+                      </TableRow>
+                    ))
                 ) : (
                   <TableRow>
                     <TableCell align="center" colSpan={12}>
@@ -231,6 +245,15 @@ function Home() {
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 100]}
+            component="div"
+            count={requests.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </Container>
 
         {/* Pop up add request */}

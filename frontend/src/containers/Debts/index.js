@@ -23,6 +23,7 @@ import AddIcon from "@material-ui/icons/Add";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import TablePagination from "@material-ui/core/TablePagination";
 
 function Debts() {
   const DEFAULT_IMG =
@@ -34,6 +35,8 @@ function Debts() {
   const [openResolve, setOpenResolve] = useState(false);
   const [selectDebt, setSelectDebt] = useState();
   const [openAdd, setOpenAdd] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     async function fetchData() {
@@ -49,6 +52,15 @@ function Debts() {
     fetchData();
     setLoading((prev) => !prev);
   }, []);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   let history = useHistory();
 
@@ -81,65 +93,67 @@ function Debts() {
               </TableHead>
               <TableBody>
                 {debtList.length > 0 ? (
-                  debtList.map((favor) => (
-                    <TableRow key={favor._id}>
-                      <TableCell component="th" scope="row">
-                        <p>
-                          {favor.items.map((item) => (
-                            <span>
-                              {item.quantity} {item.id.prize}{" "}
-                            </span>
-                          ))}
-                        </p>
-                      </TableCell>
-                      <TableCell align="right">
-                        {favor.ownerID.userName}
-                      </TableCell>
-                      <TableCell align="right">
-                        {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
-                      </TableCell>
-                      <TableCell align="right">
-                        <img
-                          src={
-                            favor.createdImage
-                              ? favor.createdImage
-                              : DEFAULT_IMG
-                          }
-                          width={100}
-                          height={100}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <img
-                          src={
-                            favor.completedImage
-                              ? favor.completedImage
-                              : DEFAULT_IMG
-                          }
-                          width={100}
-                          height={100}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {!favor.isComplete && (
-                          <ButtonGroup
-                            variant="contained"
-                            color="primary"
-                            aria-label="contained primary button group"
-                          >
-                            <Button
-                              onClick={() => {
-                                setOpenResolve(true);
-                                setSelectDebt(favor);
-                              }}
+                  debtList
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((favor) => (
+                      <TableRow key={favor._id}>
+                        <TableCell component="th" scope="row">
+                          <p>
+                            {favor.items.map((item) => (
+                              <span>
+                                {item.quantity} {item.id.prize}{" "}
+                              </span>
+                            ))}
+                          </p>
+                        </TableCell>
+                        <TableCell align="right">
+                          {favor.ownerID.userName}
+                        </TableCell>
+                        <TableCell align="right">
+                          {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
+                        </TableCell>
+                        <TableCell align="right">
+                          <img
+                            src={
+                              favor.createdImage
+                                ? favor.createdImage
+                                : DEFAULT_IMG
+                            }
+                            width={100}
+                            height={100}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <img
+                            src={
+                              favor.completedImage
+                                ? favor.completedImage
+                                : DEFAULT_IMG
+                            }
+                            width={100}
+                            height={100}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          {!favor.isComplete && (
+                            <ButtonGroup
+                              variant="contained"
+                              color="primary"
+                              aria-label="contained primary button group"
                             >
-                              Resolve
-                            </Button>
-                          </ButtonGroup>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
+                              <Button
+                                onClick={() => {
+                                  setOpenResolve(true);
+                                  setSelectDebt(favor);
+                                }}
+                              >
+                                Resolve
+                              </Button>
+                            </ButtonGroup>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
                 ) : (
                   <TableRow>
                     <TableCell align="center" colSpan={12}>
@@ -150,6 +164,15 @@ function Debts() {
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 100]}
+            component="div"
+            count={debtList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </div>
       </Container>
 
