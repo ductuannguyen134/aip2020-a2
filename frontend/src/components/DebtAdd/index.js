@@ -6,7 +6,7 @@ import { Button, IconButton, Input } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
-import axios from "../../hoc/axios";
+import axios, {axiosImgur} from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
@@ -96,10 +96,11 @@ function DebtAdd(props) {
         const fd = new FormData();
         fd.append("image", proof, proof.name);
 
-        axios
-          .post("https://api.imgur.com/3/upload", fd, {
+        axiosImgur
+          .post("/https://api.imgur.com/3/upload", fd, {
             headers: {
-              Authorization: "Client-ID 8fc1c1863ad18a9",
+              Authorization: "Client-ID 7f36d9bcba410e6",
+              mode: 'cors'
             },
           })
           .then((res) => {

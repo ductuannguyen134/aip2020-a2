@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, IconButton, Input } from "@material-ui/core";
-import axios from "../../hoc/axios";
+import axios, {axiosImgur} from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -32,8 +32,8 @@ const ResolveModal = (props) => {
         const fd = new FormData();
         fd.append("image", img, img.name);
 
-        axios
-          .post("https://api.imgur.com/3/upload", fd, {
+        axiosImgur
+          .post("/https://api.imgur.com/3/upload", fd, {
             headers: {
               Authorization: "Client-ID 8fc1c1863ad18a9",
             },
