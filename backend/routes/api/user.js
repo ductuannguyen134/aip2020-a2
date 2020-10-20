@@ -91,7 +91,7 @@ router.post("/login", (req, res) => {
 });
 
 router.get("/users", (req, res) => {
-  User.find({}, { userName: 1 }).then((users) => {
+  User.find({}, "userName completedRequest").then((users) => {
     if (users.length != "undefined") return res.status(200).json(users);
   });
 });

@@ -22,7 +22,9 @@ import axios from "../../hoc/axios";
 import RequestAdd from "../../components/RequestAdd";
 import PrizeAdd from "../../components/PrizeAdd";
 import ResolveModal from "../../components/ResolveModal";
-import {useLoading} from "../../hoc/LoadingContext/LoadingContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import { ACTIONS } from "../../hoc/UserContext/reducer";
+import TablePagination from "@material-ui/core/TablePagination";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -33,6 +35,8 @@ function Home() {
   const [openResolve, setOpenReolve] = useState(false);
   const [selectRequest, setSelectRequest] = useState();
   const [loading, setLoading] = useLoading();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     async function fetchData() {
@@ -45,8 +49,36 @@ function Home() {
           alert(error);
         });
     }
+
+    async function verifyUser() {
+      try {
+        const response = await axios.get("/api/user/verify", {
+          headers: {
+            Authorization: user.token,
+          },
+        });
+      } catch (err) {
+        if (err) {
+          alert("Your session is timeout. Please login again");
+          logout();
+        }
+      }
+    }
+    setLoading((prev) => !prev);
     fetchData();
+    if (user) {
+      verifyUser();
+    }
+    setLoading((prev) => !prev);
   }, []);
+
+  function logout() {
+    dispatch({
+      type: ACTIONS.SET_USER,
+      user: null,
+    });
+    history.push("/");
+  }
 
   const handleClickOpen = () => {
     if (user) {
@@ -113,8 +145,11 @@ function Home() {
     <Button
       variant="contained"
       color="secondary"
-      // onClick={() => handleDeleteClick(id)}
-      onClick={() => {if(window.confirm('Are you sure to delete this record?')){handleDeleteClick(id)};}}
+      onClick={() => {
+        if (window.confirm("Are you sure to delete this record?")) {
+          handleDeleteClick(id);
+        }
+      }}
     >
       Delete
     </Button>
@@ -131,13 +166,19 @@ function Home() {
     return temp > 0 ? true : false;
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <div className="home">
       <div className="home__data">
         <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
-          
-          <button onClick={() => setLoading((prev)=>!prev)}>Change loading state</button>
-          
           <div className="request__add">
             <h1>Active public requests</h1>
             <IconButton onClick={handleClickOpen}>
@@ -155,45 +196,64 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {requests.map((request) => (
-                  <TableRow key={request._id}>
-                    <TableCell component="th" scope="row">
-                      {request.requestContent}
-                    </TableCell>
-                    <TableCell align="right">
-                      {request.requestFavors.map((favor) => (
-                        <p>
-                          {favor.rewards.map((reward) => (
-                            <span>
-                              {reward.quantity} {reward.id.prize}{" "}
-                            </span>
+                {requests.length > 0 ? (
+                  requests
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((request) => (
+                      <TableRow key={request._id}>
+                        <TableCell component="th" scope="row">
+                          {request.requestContent}
+                        </TableCell>
+                        <TableCell align="right">
+                          {request.requestFavors.map((favor) => (
+                            <p>
+                              {favor.rewards.map((reward) => (
+                                <span>
+                                  {reward.quantity} {reward.id.prize}{" "}
+                                </span>
+                              ))}
+                            </p>
                           ))}
-                        </p>
-                      ))}
-                    </TableCell>
-                    <TableCell align="right">
-                      {request.requestFavors.map((favor) => (
-                        <p>
-                          {user
-                            ? favor.from["_id"] != user.userID
-                              ? favor.from.userName
-                              : "You"
-                            : favor.from.userName}
-                        </p>
-                      ))}
-                    </TableCell>
-                    <TableCell align="right">
-                      {!user
-                        ? buttonGroup(request)
-                        : verifyUser(user.userID, request.requestFavors)
-                        ? buttonDelete(request["_id"])
-                        : buttonGroup(request)}
+                        </TableCell>
+                        <TableCell align="right">
+                          {request.requestFavors.map((favor) => (
+                            <p>
+                              {user
+                                ? favor.from["_id"] != user.userID
+                                  ? favor.from.userName
+                                  : "You"
+                                : favor.from.userName}
+                            </p>
+                          ))}
+                        </TableCell>
+                        <TableCell align="right">
+                          {!user
+                            ? buttonGroup(request)
+                            : verifyUser(user.userID, request.requestFavors)
+                            ? buttonDelete(request["_id"])
+                            : buttonGroup(request)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                ) : (
+                  <TableRow>
+                    <TableCell align="center" colSpan={12}>
+                      No active request has been added
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 100]}
+            component="div"
+            count={requests.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </Container>
 
         {/* Pop up add request */}
@@ -221,7 +281,10 @@ function Home() {
             history.push("/");
           }}
         >
-          <ResolveModal request={selectRequest} />
+          <ResolveModal
+            request={selectRequest}
+            onResolve={() => setOpenReolve(false)}
+          />
         </Dialog>
       </div>
     </div>

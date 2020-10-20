@@ -1,80 +1,71 @@
-import React, {useEffect, useState} from 'react';
-import './styles.css';
-import {Container, TextField, Button, ButtonGroup, IconButton, Dialog, DialogTitle} from '@material-ui/core';
-import { Link, Route, Redirect, useHistory } from 'react-router-dom';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React, { useEffect, useState } from "react";
+import "./styles.css";
+import {
+  Container,
+  TextField,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Dialog,
+  DialogTitle,
+} from "@material-ui/core";
+import { Link, Route, Redirect, useHistory } from "react-router-dom";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import axios from "../../hoc/axios";
+import DataTable from "react-data-table-component";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+
+const columns = [
+  { name: "Username", selector: "userName", sortable: false },
+  {
+    name: "Number of resolved requests",
+    selector: "completedRequest",
+    sortable: true,
+    right: true,
+  },
+];
 
 function Active() {
+  const [activeLists, setActiveLists] = useState();
+  const [loading, setLoading] = useLoading();
 
-    const [activeLists, setActiveLists] = useState([]);
+  useEffect(() => {
+    async function fetchTopActive() {
+      setLoading((prev) => !prev);
+      let data;
+      try {
+        const res = await axios.get("/api/user/users");
+        data = res.data;
+        setLoading((prev) => !prev);
+      } catch (err) {
+        alert(err);
+      }
+      const rows = data.sort((a, b) => {
+        return b.completedRequest - a.completedRequest;
+      });
+      setActiveLists(rows);
+    }
+    fetchTopActive();
+  }, []);
 
-    useEffect(() =>{
-        function createData(userName, requestNum) {
-            return { userName, requestNum };
-        }
-          
-        const data = [
-            createData('tuan', 4),
-            createData('duc', 3),
-            createData('hailey', 1),
-            createData('thinh',5),
-            createData('tuan', 4),
-            createData('duc', 3),
-            createData('hailey', 1),
-            createData('thinh',5),
-            createData('tuan', 4),
-            createData('duc', 3),
-            createData('hailey', 1),
-            createData('thinh',5),
-            createData('tuan', 4),
-            createData('duc', 3),
-            createData('hailey', 1),
-            createData('thinh',5)
-        ];
-
-        const rows = data.sort((a,b) => {
-            return b.requestNum - a.requestNum;
-        });
-
-        setActiveLists(rows);
-        console.log(rows);
-    }, [])
-
-    return (
-        <div className="activeboard">
-            <div className="activeboard-body">
-                <div className="activeboard__heading">
-                    <h3>Most Active Users</h3>
-                </div>
-                <TableContainer component={Paper}>
-                        <Table className="table" aria-label="simple table">
-                            <TableHead>
-                            <TableRow>
-                                <TableCell>Username</TableCell>
-                                <TableCell align="right">Number of resolved requests</TableCell>
-                            </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {activeLists.map((row) => (
-                                    <TableRow key={row.name}>
-                                    <TableCell component="th" scope="row">
-                                        {row.userName}
-                                    </TableCell>
-                                    <TableCell align="right">{row.requestNum}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-            </div>
-        </div>
-    )
+  return (
+    <DataTable
+      title="Most Active Users"
+      columns={columns}
+      data={activeLists}
+      pagination={true}
+      keyField="_id"
+      highlightOnHover={true}
+      paginationPerPage={5}
+      paginationRowsPerPageOptions={[5, 10, 15]}
+    />
+  );
 }
 
-export default Active
+export default Active;

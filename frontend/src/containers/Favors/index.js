@@ -20,16 +20,20 @@ import "./style.css";
 import AddIcon from "@material-ui/icons/Add";
 import FavorAdd from "../../components/FavorAdd";
 import axios from "../../hoc/axios";
-import {useUserStatus} from '../../hoc/UserContext/UserContext';
-
+import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import TablePagination from "@material-ui/core/TablePagination";
 
 function Favors() {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();
+  const [loading, setLoading] = useLoading();
   const [favorList, setFavorList] = useState([]);
   const [open, setOpen] = useState(false);
   let history = useHistory();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Retrieve a list of Favor for the user
   useEffect(() => {
@@ -41,9 +45,11 @@ function Favors() {
       });
       setFavorList(response.data);
     }
+    setLoading((prev) => !prev);
     fetchData(user.userID).catch((error) => {
       console.log(error);
     });
+    setLoading((prev) => !prev);
   }, []);
 
   function handleComplete(id) {
@@ -93,6 +99,15 @@ function Favors() {
     history.push("/favors");
   }
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <div>
       <Container fixed style={{ backgroundColor: "#ffffff", padding: 50 }}>
@@ -119,64 +134,68 @@ function Favors() {
             </TableHead>
             <TableBody>
               {favorList.length > 0 ? (
-                favorList.map((favor) => (
-                  <TableRow key={favor._id}>
-                    <TableCell component="th" scope="row">
-                      <p>
-                        {favor.items.map((item) => (
-                          <span>
-                            {item.quantity} {item.id.prize}{" "}
-                          </span>
-                        ))}
-                      </p>
-                    </TableCell>
-                    <TableCell align="right">
-                      {favor.debtorID.userName}
-                    </TableCell>
-                    <TableCell align="right">
-                      {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
-                    </TableCell>
-                    <TableCell align="right">
-                      <img
-                        src={
-                          favor.createdImage ? favor.createdImage : DEFAULT_IMG
-                        }
-                        width={100}
-                        height={100}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <img
-                        src={
-                          favor.completedImage
-                            ? favor.completedImage
-                            : DEFAULT_IMG
-                        }
-                        width={100}
-                        height={100}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      {!favor.isComplete && (
-                        <ButtonGroup
-                          variant="contained"
-                          color="primary"
-                          aria-label="contained primary button group"
-                        >
-                          <Button onClick={(e) => handleComplete(favor._id)}>
-                            Complete
+                favorList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((favor) => (
+                    <TableRow key={favor._id}>
+                      <TableCell component="th" scope="row">
+                        <p>
+                          {favor.items.map((item) => (
+                            <span>
+                              {item.quantity} {item.id.prize}{" "}
+                            </span>
+                          ))}
+                        </p>
+                      </TableCell>
+                      <TableCell align="right">
+                        {favor.debtorID.userName}
+                      </TableCell>
+                      <TableCell align="right">
+                        {favor.isComplete ? "COMPLETED" : "UNCOMPLETED"}
+                      </TableCell>
+                      <TableCell align="right">
+                        <img
+                          src={
+                            favor.createdImage
+                              ? favor.createdImage
+                              : DEFAULT_IMG
+                          }
+                          width={100}
+                          height={100}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        <img
+                          src={
+                            favor.completedImage
+                              ? favor.completedImage
+                              : DEFAULT_IMG
+                          }
+                          width={100}
+                          height={100}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {!favor.isComplete && (
+                          <ButtonGroup
+                            variant="contained"
+                            color="primary"
+                            aria-label="contained primary button group"
+                          >
+                            <Button onClick={(e) => handleComplete(favor._id)}>
+                              Complete
+                            </Button>
+                          </ButtonGroup>
+                        )}
+
+                        <ButtonGroup variant="contained" color="secondary">
+                          <Button onClick={(e) => handleDelete(favor._id)}>
+                            Delete
                           </Button>
                         </ButtonGroup>
-                      )}
-
-                      <ButtonGroup variant="contained" color="secondary">
-                        <Button onClick={(e) => handleDelete(favor._id)}>
-                          Delete
-                        </Button>
-                      </ButtonGroup>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      </TableCell>
+                    </TableRow>
+                  ))
               ) : (
                 <TableRow>
                   <TableCell align="center" colSpan={12}>
@@ -187,6 +206,15 @@ function Favors() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 100]}
+          component="div"
+          count={favorList.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
 
         {/* Route to favor add */}
         <Route path="/favors/add">
@@ -196,7 +224,7 @@ function Favors() {
             onClose={handleClose}
             aria-labelledby="form-dialog-title"
           >
-            <FavorAdd handleAdd={handleAdd} />
+            <FavorAdd onFavorAdd={() => setOpen(false)} />
           </Dialog>
         </Route>
       </Container>

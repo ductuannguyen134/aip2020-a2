@@ -6,14 +6,16 @@ import { Button, IconButton, Input } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
-import axios from "../../hoc/axios";
+import axios, {axiosImgur} from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
 function DebtAdd(props) {
   const [{ user }, dispatch] = useUserStatus();
+  const [loading, setLoading] = useLoading();
   const [users, setUsers] = useState([]);
   const [items, setItems] = useState([]);
   const [person, setPerson] = useState();
@@ -86,16 +88,19 @@ function DebtAdd(props) {
     if (!person || (inputList.length == 1 && inputList[0].id == "")) {
       alert("Please insert all required fields");
     } else {
+      props.onAdd();
+      setLoading((prev) => !prev);
       if (proof) {
         let createdImage;
 
         const fd = new FormData();
         fd.append("image", proof, proof.name);
 
-        axios
-          .post("https://api.imgur.com/3/upload", fd, {
+        axiosImgur
+          .post("/https://api.imgur.com/3/upload", fd, {
             headers: {
-              Authorization: "Client-ID 2d41554ce8617a3",
+              Authorization: "Client-ID 7f36d9bcba410e6",
+              mode: 'cors'
             },
           })
           .then((res) => {
@@ -114,11 +119,18 @@ function DebtAdd(props) {
                 },
               })
               .then(() => {
+                setLoading((prev) => !prev);
                 window.location.reload();
               })
-              .catch((err) => alert(err));
+              .catch((err) => {
+                setLoading((prev) => !prev);
+                alert(err);
+              });
           })
-          .catch((err) => alert(err));
+          .catch((err) => {
+            setLoading((prev) => !prev);
+            alert(err);
+          });
       } else {
         const params = {
           ownerID: person,
@@ -133,9 +145,13 @@ function DebtAdd(props) {
             },
           })
           .then(() => {
+            setLoading((prev) => !prev);
             window.location.reload();
           })
-          .catch((err) => alert(err));
+          .catch((err) => {
+            setLoading((prev) => !prev);
+            alert(err);
+          });
       }
     }
   };

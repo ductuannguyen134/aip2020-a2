@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Favor = require("../../models/Favor");
 const passport = require("passport");
+const User = require("../../models/User");
 
 // Retrieve favor list for a specific user
 router.get(
@@ -77,6 +78,29 @@ router.get(
 );
 
 //Resolve debt
-router.patch("/debt/resolve/:id");
+router.get("/top", (req, res) => {
+  Favor.aggregate([
+    {
+      $group: {
+        _id: "$debtorID",
+        totalDebt: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "userDetail",
+      },
+    },
+  ])
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
 
 module.exports = router;
