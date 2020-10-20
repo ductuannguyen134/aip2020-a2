@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import axios from "../../hoc/axios";
+import axios, {axiosImgur} from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
@@ -32,8 +32,8 @@ function ResolveDebts(props) {
       const fd = new FormData();
       fd.append("image", img, img.name);
 
-      axios
-        .post("https://api.imgur.com/3/upload", fd, {
+      axiosImgur
+        .post("/https://api.imgur.com/3/upload", fd, {
           headers: {
             Authorization: "Client-ID 8fc1c1863ad18a9",
           },
