@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Request = require("../../models/Request");
 const passport = require("passport");
-const validateRequestInput = require("../../validation/request");
 const User = require("../../models/User");
 const Favor = require("../../models/Favor");
 
