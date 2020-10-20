@@ -6,7 +6,7 @@ import { Button, IconButton, Input } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
-import axios, {axiosImgur} from "../../hoc/axios";
+import axios, { axiosImgur } from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 
@@ -56,9 +56,20 @@ function DebtAdd(props) {
 
   function handleInputChange(e, index) {
     const { name, value } = e.target;
-    const list = [...inputList];
-    list[index][name] = value;
-    setInputList(list);
+
+    if (name == "id") {
+      if (inputList.length > 1 && inputList.findIndex((val) => val.id == value) != -1) {
+        alert("Cannot select the same type of prize");
+      } else {
+        const list = [...inputList];
+        list[index][name] = value;
+        setInputList(list);
+      }
+    } else {
+      const list = [...inputList];
+      list[index][name] = value;
+      setInputList(list);
+    }
   }
 
   function handleRemoveInputField(index) {
@@ -100,7 +111,7 @@ function DebtAdd(props) {
           .post("/https://api.imgur.com/3/upload", fd, {
             headers: {
               Authorization: "Client-ID 7f36d9bcba410e6",
-              mode: 'cors'
+              mode: "cors",
             },
           })
           .then((res) => {

@@ -39,9 +39,13 @@ const PrizeAdd = (props) => {
   };
 
   const handleChangeItem = (item, index) => {
-    const list = [...items];
-    list[index].id = item;
-    setItems(list);
+    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+      alert("Cannot select the same type of prize");
+    } else {
+      const list = [...items];
+      list[index].id = item;
+      setItems(list);
+    }
   };
 
   const handleChangeItemNum = (quantity, index) => {

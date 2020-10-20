@@ -14,6 +14,7 @@ function RequestAdd() {
   const [request, setRequest] = useState();
   const [prizes, setPrize] = useState([]);
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);
+  const [selectedPrize, setSelectedPrize] = useState([]);
 
   useEffect(() => {
     const getPrizeList = async () => {
@@ -35,9 +36,13 @@ function RequestAdd() {
   };
 
   const handleChangeItem = (item, index) => {
-    const list = [...items];
-    list[index].id = item;
-    setItems(list);
+    if ((items.length > 1) && (items.findIndex((val) => val.id == item) != -1)) {
+      alert("Cannot select the same type of prize");
+    } else {
+      const list = [...items];
+      list[index].id = item;
+      setItems(list);
+    }
   };
 
   const handleChangeItemNum = (quantity, index) => {
