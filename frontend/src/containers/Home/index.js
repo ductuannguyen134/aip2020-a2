@@ -37,6 +37,9 @@ function Home() {
   const [loading, setLoading] = useLoading();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchReward, setSearchReward] = useState("");
+  const [searchContent, setSearchContent] = useState("");
+  const [searchResults, setSearchResults] = useState();
 
   useEffect(() => {
     async function fetchData() {
@@ -175,6 +178,33 @@ function Home() {
     setPage(0);
   };
 
+  const handleSearchContent = (query) => {
+    setSearchContent(query);
+    let searchValue = query.trim().toLowerCase();
+    if (searchValue.length > 0) {
+      let searchResults = requests.filter((request) => request.requestContent.toLowerCase().includes(searchValue));
+      setSearchResults(searchResults);
+    } else {
+      setSearchResults(null);
+    }
+  };
+
+  const handleSearchReward = (query) => {
+    setSearchReward(query);
+    let searchValue = query.trim().toLowerCase();
+    if (searchValue.length > 0) {
+      let searchResults = requests.filter((request) => request.requestFavors.some(favor => favor.rewards.some(reward => reward.id.prize.toLowerCase().includes(searchValue))));
+      setSearchResults(searchResults);
+    } else {
+      setSearchResults(null);
+    }
+  };
+
+  let requestList = requests;
+    if (searchResults) {
+      requestList = searchResults; //If search results exists, render that list instead
+    }
+  
   return (
     <div className="home">
       <div className="home__data">
@@ -184,6 +214,16 @@ function Home() {
             <IconButton onClick={handleClickOpen}>
               <AddIcon />
             </IconButton>
+             <div style={{ width: 300 }}>
+              <TextField  value={searchContent} 
+                  onChange={(event) => handleSearchContent(event.target.value)}
+                  label="Search by keyword" margin="normal" variant="outlined" />
+             </div>
+             <div style={{ width: 300 }}>
+              <TextField  value={searchReward} 
+                  onChange={(event) => handleSearchReward(event.target.value)}
+                  label="Search by reward" margin="normal" variant="outlined" />
+             </div> 
           </div>
           <TableContainer component={Paper}>
             <Table className="table" aria-label="simple table">
@@ -196,8 +236,8 @@ function Home() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {requests.length > 0 ? (
-                  requests
+                {requestList.length > 0 ? (
+                  requestList
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((request) => (
                       <TableRow key={request._id}>
@@ -238,7 +278,7 @@ function Home() {
                 ) : (
                   <TableRow>
                     <TableCell align="center" colSpan={12}>
-                      No active request has been added
+                      No {searchResults ? "search results" : "active request has been added"}
                     </TableCell>
                   </TableRow>
                 )}
