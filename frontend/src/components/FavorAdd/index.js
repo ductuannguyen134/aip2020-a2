@@ -6,7 +6,7 @@ import { Button, IconButton, Input } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
-import axios from "../../hoc/axios";
+import axios, {axiosImgur} from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 
 const DEFAULT_IMG =
@@ -91,14 +91,15 @@ function FavorAdd(props) {
       const fd = new FormData();
       fd.append("image", proof, proof.name);
 
-      axios
-        .post("https://api.imgur.com/3/upload", fd, {
+      axiosImgur
+        .post("/https://api.imgur.com/3/upload", fd, {
           headers: {
-            Authorization: "Client-ID 2d41554ce8617a3",
+            Authorization: "Client-ID 7f36d9bcba410e6",
+            mode: 'cors'
           },
         })
         .then((res) => {
-          createdImage = res.data.data.link;
+          createdImage = res.data.data .link;
           const params = {
             ownerID: user.userID,
             debtorID: person,
@@ -115,9 +116,9 @@ function FavorAdd(props) {
             .then(() => {
               window.location.reload();
             })
-            .catch((err) => alert(err));
+            .catch((err) => console.log(err));
         })
-        .catch((err) => alert(err));
+        .catch((err) => console.log(err));
     }
   }
 
