@@ -45,5 +45,4 @@ const favorModel = {
 }
 
 const FavorSchema = new mongoose.Schema(favorModel);
-
 module.exports = mongoose.model('favors', FavorSchema);

@@ -5,7 +5,7 @@ const passport = require('passport');
 const validateRequestInput = require('../../validation/request');
 
 router.get('/', (req, res) => {
-    Request.find({ user: req.user.user_name })
+    Request.find({ user: req.user.userName })
       .then((requests) => res.status(200).json(requests))
       .catch((err) =>
         res.status(400).json({ user: 'Error fetching requests of logged in user!' })
@@ -33,7 +33,7 @@ router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const user = req.user.user_name;
+    const user = req.user.userID;
     const request = req.body;
     const { errors, isValid } = validateRequestInput(request);
     if (!isValid) {
@@ -52,7 +52,7 @@ router.patch(
   '/update/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const user = req.user.user_name;
+    const user = req.user.userName;
     const { errors, isValid } = validateRequestInput(req.body);
     if (!isValid) {
       return res.status(400).json(errors);
@@ -74,7 +74,7 @@ router.delete(
   '/delete/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const user = req.user.user_name;
+    const user = req.user.userName;
     Request.findOneAndDelete({ user, _id: req.params.id })
       .then((doc) => res.status(200).json(doc))
       .catch((err) =>
