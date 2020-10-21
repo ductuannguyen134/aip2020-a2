@@ -8,6 +8,7 @@ import Home from "./containers/Home";
 import NotFound from "./containers/NotFound";
 import Favors from "./containers/Favors";
 import Debts from "./containers/Debts";
+import PartyDetection from "./containers/PartyDetection";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
@@ -47,6 +48,9 @@ function App() {
             </Route>
             <Route path="/favors">{user ? <Favors /> : <Login />}</Route>
             <Route path="/debts">{user ? <Debts /> : <Login />}</Route>
+            <Route path="/party">
+              {user ? <PartyDetection /> : <Login />}
+            </Route>
             <Route path="/requests">
               <Home />
             </Route>

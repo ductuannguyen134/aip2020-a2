@@ -4,6 +4,22 @@ const Favor = require("../../models/Favor");
 const passport = require("passport");
 const User = require("../../models/User");
 
+// Get all uncompleted favors
+router.get(
+  "/uncompleted",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    await Favor.find({isComplete: false}).populate("debtorID", "userName").populate("ownerID", "userName")
+      .exec()
+      .then((favors) => res.status(200).json(favors))
+      .catch((err) =>
+        res
+          .status(400)
+          .json({ user: "Error fetching requests of logged in user!" })
+      );
+  }
+);
+
 // Retrieve favor list for a specific user
 router.get(
   "/user/:userID",
