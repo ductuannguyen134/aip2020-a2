@@ -33,12 +33,17 @@ function Header() {
                         <p style={{color: "white"}}>Hello, {user.userName}</p>
                         <Link to="/favors" className="header__link">
                             <div className="header__option">
-                                <span>Your Favor</span>
+                                <span>Your Favors</span>
                             </div>
                         </Link>
                         <Link to="/debts" className="header__link">
                             <div className="header__option">
                                 <span>Your Debts</span>
+                            </div>
+                        </Link>
+                        <Link to="/party" className="header__link">
+                            <div className="header__option">
+                                <span>Parties</span>
                             </div>
                         </Link>
                     </>
