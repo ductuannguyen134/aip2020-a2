@@ -61,13 +61,14 @@ function PartyDetection() {
     setPage(0);
   };
 
+  let parties = []; // all parties
+  
   const Party = () => {
     try
     {
         users.forEach((user) => graph.addVertex(user.userName));
         favors.forEach((favor) => graph.addEdge(favor.debtorID.userName, favor.ownerID.userName));
         // console.log(graph);
-        let parties = []; // all parties
         for (let cycle of graph.cycles()) {
         let partyUsers = []; //all users of 1 specific party
         // Only include cycle that has more than 2 people
@@ -80,7 +81,7 @@ function PartyDetection() {
                 parties.push(partyUsers);
             }
         }
-        return parties;
+        // return parties;
     }
     catch (error){};
     }
@@ -98,8 +99,8 @@ function PartyDetection() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Party().length > 0 ? (
-                                Party().map((party, index) => (
+                            {parties.length > 0 ? (
+                                parties.map((party, index) => (
                                     <TableRow key={index}>
                                         <TableCell align="left">{index+1}</TableCell>
                                         <TableCell align="center" component="th" scope="row">
@@ -125,7 +126,7 @@ function PartyDetection() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 100]}
                     component="div"
-                    count={Party().length}
+                    count={parties.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
