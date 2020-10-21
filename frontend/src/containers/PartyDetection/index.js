@@ -98,19 +98,27 @@ function PartyDetection() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Party().map((party, index) => (
-                                <TableRow key={index}>
-                                    <TableCell align="left">{index+1}</TableCell>
-                                    <TableCell align="center" component="th" scope="row">
-                                    <p>
-                                    {party.map((partyUser) => (
-                                        <span>
-                                        {partyUser}{" "}
-                                        </span>
-                                    ))}
-                                    </p>
-                                </TableCell>
-                                </TableRow>))}
+                            {Party().length > 0 ? (
+                                Party().map((party, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="left">{index+1}</TableCell>
+                                        <TableCell align="center" component="th" scope="row">
+                                            <p>
+                                            {party.map((partyUser) => (
+                                                <span>
+                                                {partyUser}{" "}
+                                                </span>
+                                            ))}
+                                            </p>
+                                        </TableCell>
+                                    </TableRow>))
+                                ) : (
+                                <TableRow>
+                                    <TableCell align="center" colSpan={12}>
+                                        No party has been detected
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
