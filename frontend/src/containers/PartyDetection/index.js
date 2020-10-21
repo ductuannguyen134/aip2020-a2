@@ -68,13 +68,13 @@ function PartyDetection() {
     {
         users.forEach((user) => graph.addVertex(user.userName));
         favors.forEach((favor) => graph.addEdge(favor.debtorID.userName, favor.ownerID.userName));
-        // console.log(graph);
+        console.log(graph);
         for (let cycle of graph.cycles()) {
         let partyUsers = []; //all users of 1 specific party
         // Only include cycle that has more than 2 people
             if (cycle.length > 2)
             {
-                // console.log(cycle);
+                console.log(cycle);
                 cycle.forEach((user) => {
                     partyUsers.push(user);
                 });
@@ -85,6 +85,8 @@ function PartyDetection() {
     }
     catch (error){};
     }
+
+    Party();
 
     return (
           <div>
