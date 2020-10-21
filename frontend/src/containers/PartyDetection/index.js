@@ -17,12 +17,12 @@ import Graph from "graph.js";
 
 function PartyDetection() {
     const [loading, setLoading] = useLoading();
-    const [{ user }, dispatch] = useUserStatus();
     const history = useHistory();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [users, setUsers] = useState([]);
     const [favors, setFavors] = useState([]);
+    const [{user}, dispatch] = useUserStatus();
     const graph = new Graph();
 
     useEffect(() => {
