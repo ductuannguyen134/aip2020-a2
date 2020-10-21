@@ -11,12 +11,15 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import TablePagination from "@material-ui/core/TablePagination";
 // import "./styles.css";
 import Graph from "graph.js";
 
 function PartyDetection() {
     const [loading, setLoading] = useLoading();
     const history = useHistory();
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [users, setUsers] = useState([]);
     const [favors, setFavors] = useState([]);
     const [{user}, dispatch] = useUserStatus();
@@ -26,9 +29,10 @@ function PartyDetection() {
     
     const getUsersList = async () => {
     const res = await axios.get("/api/user/users", {
-      headers: {
-        Authorization: user.token,
-      }});
+        headers: {
+          Authorization: user.token,
+        },
+      });
     setUsers(res.data);
     };
 
@@ -36,7 +40,8 @@ function PartyDetection() {
       const res = await axios.get("/api/favor/uncompleted", {
         headers: {
           Authorization: user.token,
-        }});
+        },
+      });
       setFavors(res.data);
     };
 
@@ -46,6 +51,15 @@ function PartyDetection() {
     getFavorsList();
     setLoading((prev) => !prev);
   }, []);
+
+   const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   const Party = () => {
     try
@@ -67,17 +81,6 @@ function PartyDetection() {
             }
         }
         return parties;
-        // const cycles = graph.cycles();
-        // console.log(cycles);
-        // Array.from(cycles).map(([key,cycle]) => {
-        //             // if (cycle.length > 2 && cycle.includes(user.userName))
-        //     if (cycle.length > 2 )
-        //     {
-        //         cycle.forEach((user) => {
-        //         text += user + " " ;
-        //         });
-        //     }
-        // });
     }
     catch (error){};
     }
@@ -86,33 +89,48 @@ function PartyDetection() {
           <div>
              <Container fixed style={{backgroundColor: '#ffffff', padding: 50}}>
                 <h1>Parties Detected</h1>
-                    <TableContainer component={Paper}>
-          <Table className="table" aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Party Number</TableCell>
-                <TableCell align="center">Users</TableCell>
-                
-              </TableRow>
-            </TableHead>
-            <TableBody>
-                {Party().map((party, index) => (
-                    <TableRow key={index}>
-                          <TableCell align="left">{index+1}</TableCell>
-                         <TableCell align="center" component="th" scope="row">
-                        <p>
-                          {party.map((partyUser) => (
-                            <span>
-                              {partyUser}{" "}
-                            </span>
-                          ))}
-                        </p>
-                      </TableCell>
-                    </TableRow>))}
-           
-            </TableBody>
-          </Table>
-        </TableContainer>
+                <TableContainer component={Paper}>
+                    <Table className="table" aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="left">Party Number</TableCell>
+                                <TableCell align="center">Users</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Party().length > 0 ? (
+                                Party().map((party, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="left">{index+1}</TableCell>
+                                        <TableCell align="center" component="th" scope="row">
+                                            <p>
+                                            {party.map((partyUser) => (
+                                                <span>
+                                                {partyUser}{" "}
+                                                </span>
+                                            ))}
+                                            </p>
+                                        </TableCell>
+                                    </TableRow>))
+                                ) : (
+                                <TableRow>
+                                    <TableCell align="center" colSpan={12}>
+                                        No party has been detected
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 100]}
+                    component="div"
+                    count={Party().length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
             </Container>
         </div>
     )
