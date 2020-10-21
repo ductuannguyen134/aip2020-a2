@@ -16,21 +16,27 @@ import Graph from "graph.js";
 
 function PartyDetection() {
     const [loading, setLoading] = useLoading();
-    const user = useUserStatus();
     const history = useHistory();
     const [users, setUsers] = useState([]);
     const [favors, setFavors] = useState([]);
+    const [{user}, dispatch] = useUserStatus();
     const graph = new Graph();
 
     useEffect(() => {
     
     const getUsersList = async () => {
-    const res = await axios.get("/api/user/users");
+    const res = await axios.get("/api/user/users", {
+      headers: {
+        Authorization: user.token,
+      }});
     setUsers(res.data);
     };
 
     const getFavorsList = async () => {
-      const res = await axios.get("/api/favor/uncompleted");
+      const res = await axios.get("/api/favor/uncompleted", {
+        headers: {
+          Authorization: user.token,
+        }});
       setFavors(res.data);
     };
 
