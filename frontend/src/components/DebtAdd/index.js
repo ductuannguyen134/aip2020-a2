@@ -216,7 +216,7 @@ function DebtAdd(props) {
                     onChange={(e) => handleInputChange(e, index)}
                     inputProps={{
                       type: "number",
-                      min: 0,
+                      min: 1,
                       max: 100,
                     }}
                   />
