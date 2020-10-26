@@ -59,6 +59,7 @@ function App() {
             </Route>
           </Switch>
         </div>
+        {/* Loading component */}
         <Backdrop className={classes.backdrop} open={loading}>
           <CircularProgress color="inherit" />
         </Backdrop>

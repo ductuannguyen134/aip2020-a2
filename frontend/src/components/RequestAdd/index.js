@@ -2,33 +2,21 @@ import React, { useEffect, useState, useReducer } from "react";
 import "./styles.css";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Button, IconButton, Input } from "@material-ui/core";
+import { Button, IconButton, Input, Dialog } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useHistory } from "react-router-dom";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
+import PrizeSelect from "../../components/PrizeSelect";
 
-function RequestAdd() {
+function RequestAdd(props) {
   const [{ user }, dispatch] = useUserStatus();
   const [request, setRequest] = useState();
-  const [prizes, setPrize] = useState([]);
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);
-  const [selectedPrize, setSelectedPrize] = useState([]);
-
-  useEffect(() => {
-    const getPrizeList = async () => {
-      const res = await axios.get("/api/prize/");
-      const prizes = res.data;
-
-      setPrize(prizes);
-    };
-
-    getPrizeList();
-  }, []);
 
   const handleAddItem = () => {
-    if (items.length < prizes.length) {
+    if (items.length < props.prizes.length) {
       setItems([...items, { id: "", quantity: 1 }]);
     } else {
       alert("Cant add more type of reward");
@@ -36,7 +24,7 @@ function RequestAdd() {
   };
 
   const handleChangeItem = (item, index) => {
-    if ((items.length > 1) && (items.findIndex((val) => val.id == item) != -1)) {
+    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
       alert("Cannot select the same type of prize");
     } else {
       const list = [...items];
@@ -93,77 +81,56 @@ function RequestAdd() {
   };
 
   return (
-    <div className="req-dialog">
-      <div className="req-dialog-content">
-        <h1>Add a new request</h1>
-        <div className="req-dialog-request">
-          <div className="req-dialog-request text">
-            <p>
-              Request: <span style={{ color: "red" }}>(Required)</span>
-            </p>
-          </div>
-          <div className="req-dialog-request-input">
-            <textarea
-              onChange={(e) => setRequest(e.target.value)}
-              value={request}
-              rows="4"
-              cols="50"
-            ></textarea>
-          </div>
-        </div>
-        <div className="req-dialog-reward">
-          <div className="req-dialog-reward text">
-            <p>
-              Rewards: <span style={{ color: "red" }}>(Required)</span>
-            </p>
-          </div>
-          <div className="widgets">
-            <p>Items: </p>
-            <div>
-              {items.map((item, index) => (
-                <div className="req-chooseitem" key={index}>
-                  <Select
-                    id="chooseItem"
-                    value={item.id}
-                    onChange={(e) => handleChangeItem(e.target.value, index)}
-                  >
-                    {prizes.map((prize) => (
-                      <MenuItem value={prize["_id"]}>{prize["prize"]}</MenuItem>
-                    ))}
-                  </Select>
-                  <Input
-                    style={{ minWidth: "10px" }}
-                    className="req-chooseItemNum"
-                    value={item.quantity}
-                    onChange={(e) => handleChangeItemNum(e.target.value, index)}
-                    inputProps={{
-                      type: "number",
-                      min: 1,
-                      max: 10,
-                    }}
-                  />
-                  {items.length > 1 && (
-                    <IconButton onClick={() => handleRemoveItem(index)}>
-                      <RemoveIcon />
-                    </IconButton>
-                  )}
-                </div>
-              ))}
+    <Dialog
+      maxWidth="lg"
+      open={props.open}
+      onClose={props.handleClose}
+      aria-labelledby="form-dialog-title"
+    >
+      <div className="req-dialog">
+        <div className="req-dialog-content">
+          <h1>Add a new request</h1>
+          <div className="req-dialog-request">
+            <div className="req-dialog-request text">
+              <p>
+                Request: <span style={{ color: "red" }}>(Required)</span>
+              </p>
             </div>
-            {items.length == prizes.length ? null : (
-              <IconButton onClick={handleAddItem}>
-                <AddIcon />
-              </IconButton>
-            )}
+            <div className="req-dialog-request-input">
+              <textarea
+                onChange={(e) => setRequest(e.target.value)}
+                value={request}
+                rows="4"
+                cols="50"
+              ></textarea>
+            </div>
           </div>
-        </div>
-        <div className="req-button">
-          <Button onClick={addRequest} color="primary" variant="contained">
-            Create Request
-          </Button>
+          <div className="req-dialog-reward">
+            <div className="req-dialog-reward text">
+              <p>
+                Rewards: <span style={{ color: "red" }}>(Required)</span>
+              </p>
+            </div>
+            <div className="widgets">
+              <p>Items: </p>
+              <PrizeSelect
+                items={items}
+                prizes={props.prizes}
+                handleChangeItem={handleChangeItem}
+                handleChangeItemNum={handleChangeItemNum}
+                handleRemoveItem={handleRemoveItem}
+                handleAddItem={handleAddItem}
+              />
+            </div>
+          </div>
+          <div className="req-button">
+            <Button onClick={addRequest} color="primary" variant="contained">
+              Create Request
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 }
 

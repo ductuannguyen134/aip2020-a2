@@ -14,7 +14,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { Link, Route, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import AddIcon from "@material-ui/icons/Add";
 import "./style.css";
@@ -25,6 +25,7 @@ import ResolveModal from "../../components/ResolveModal";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import { ACTIONS } from "../../hoc/UserContext/reducer";
 import TablePagination from "@material-ui/core/TablePagination";
+import SearchRequest from "../../components/SearchRequest";
 
 function Home() {
   const [{ user }, dispatch] = useUserStatus();
@@ -40,6 +41,7 @@ function Home() {
   const [searchReward, setSearchReward] = useState("");
   const [searchContent, setSearchContent] = useState("");
   const [searchResults, setSearchResults] = useState();
+  const [prizes, setPrize] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -67,11 +69,20 @@ function Home() {
         }
       }
     }
+
+    const getPrizeList = async () => {
+      const res = await axios.get("/api/prize/");
+      const prizes = res.data;
+
+      setPrize(prizes);
+    };
+
     setLoading((prev) => !prev);
     fetchData();
     if (user) {
       verifyUser();
     }
+    getPrizeList();
     setLoading((prev) => !prev);
   }, []);
 
@@ -89,11 +100,6 @@ function Home() {
     } else {
       history.push("/login");
     }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    history.push("/");
   };
 
   const handleDeleteClick = async (id) => {
@@ -182,7 +188,9 @@ function Home() {
     setSearchContent(query);
     let searchValue = query.trim().toLowerCase();
     if (searchValue.length > 0) {
-      let searchResults = requests.filter((request) => request.requestContent.toLowerCase().includes(searchValue));
+      let searchResults = requests.filter((request) =>
+        request.requestContent.toLowerCase().includes(searchValue)
+      );
       setSearchResults(searchResults);
     } else {
       setSearchResults(null);
@@ -193,7 +201,13 @@ function Home() {
     setSearchReward(query);
     let searchValue = query.trim().toLowerCase();
     if (searchValue.length > 0) {
-      let searchResults = requests.filter((request) => request.requestFavors.some(favor => favor.rewards.some(reward => reward.id.prize.toLowerCase().includes(searchValue))));
+      let searchResults = requests.filter((request) =>
+        request.requestFavors.some((favor) =>
+          favor.rewards.some((reward) =>
+            reward.id.prize.toLowerCase().includes(searchValue)
+          )
+        )
+      );
       setSearchResults(searchResults);
     } else {
       setSearchResults(null);
@@ -201,10 +215,10 @@ function Home() {
   };
 
   let requestList = requests;
-    if (searchResults) {
-      requestList = searchResults; //If search results exists, render that list instead
-    }
-  
+  if (searchResults) {
+    requestList = searchResults; //If search results exists, render that list instead
+  }
+
   return (
     <div className="home">
       <div className="home__data">
@@ -214,118 +228,133 @@ function Home() {
             <IconButton onClick={handleClickOpen}>
               <AddIcon />
             </IconButton>
-             <div style={{ width: 300 }}>
-              <TextField  value={searchContent} 
-                  onChange={(event) => handleSearchContent(event.target.value)}
-                  label="Search by keyword" margin="normal" variant="outlined" />
-             </div>
-             <div style={{ width: 300 }}>
-              <TextField  value={searchReward} 
-                  onChange={(event) => handleSearchReward(event.target.value)}
-                  label="Search by reward" margin="normal" variant="outlined" />
-             </div> 
+            <SearchRequest
+              searchContent={searchContent}
+              onChangeSearchContent={(event) =>
+                handleSearchContent(event.target.value)
+              }
+              searchReward={searchReward}
+              onChangeSearchReward={(event) =>
+                handleSearchReward(event.target.value)
+              }
+            />
           </div>
-          <TableContainer component={Paper}>
-            <Table className="table" aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Requests</TableCell>
-                  <TableCell align="right">Rewards</TableCell>
-                  <TableCell align="right">From</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {requestList.length > 0 ? (
-                  requestList
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((request) => (
-                      <TableRow key={request._id}>
-                        <TableCell component="th" scope="row">
-                          {request.requestContent}
-                        </TableCell>
-                        <TableCell align="right">
-                          {request.requestFavors.map((favor) => (
-                            <p>
-                              {favor.rewards.map((reward) => (
-                                <span>
-                                  {reward.quantity} {reward.id.prize}{" "}
-                                </span>
-                              ))}
-                            </p>
-                          ))}
-                        </TableCell>
-                        <TableCell align="right">
-                          {request.requestFavors.map((favor) => (
-                            <p>
-                              {user
-                                ? favor.from["_id"] != user.userID
-                                  ? favor.from.userName
-                                  : "You"
-                                : favor.from.userName}
-                            </p>
-                          ))}
-                        </TableCell>
-                        <TableCell align="right">
-                          {!user
-                            ? buttonGroup(request)
-                            : verifyUser(user.userID, request.requestFavors)
-                            ? buttonDelete(request["_id"])
-                            : buttonGroup(request)}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                ) : (
+          <div>
+            <TableContainer component={Paper}>
+              <Table className="table" aria-label="simple table">
+                <TableHead>
                   <TableRow>
-                    <TableCell align="center" colSpan={12}>
-                      No {searchResults ? "search results" : "active request has been added"}
-                    </TableCell>
+                    <TableCell>Requests</TableCell>
+                    <TableCell align="right">Rewards</TableCell>
+                    <TableCell align="right">From</TableCell>
+                    <TableCell align="right"></TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 100]}
-            component="div"
-            count={requests.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
+                </TableHead>
+                <TableBody>
+                  {requestList.length > 0 ? (
+                    requestList
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((request) => (
+                        <TableRow key={request._id}>
+                          <TableCell component="th" scope="row">
+                            {request.requestContent}
+                          </TableCell>
+                          <TableCell align="right">
+                            {request.requestFavors.map((favor) => (
+                              <p>
+                                {favor.rewards.map((reward) => (
+                                  <span>
+                                    {reward.quantity} {reward.id.prize}{" "}
+                                  </span>
+                                ))}
+                              </p>
+                            ))}
+                          </TableCell>
+                          <TableCell align="right">
+                            {request.requestFavors.map((favor) => (
+                              <p>
+                                {user
+                                  ? favor.from["_id"] != user.userID
+                                    ? favor.from.userName
+                                    : "You"
+                                  : favor.from.userName}
+                              </p>
+                            ))}
+                          </TableCell>
+                          <TableCell align="right">
+                            {!user
+                              ? buttonGroup(request)
+                              : verifyUser(user.userID, request.requestFavors)
+                              ? buttonDelete(request["_id"])
+                              : buttonGroup(request)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  ) : (
+                    <TableRow>
+                      <TableCell align="center" colSpan={12}>
+                        No{" "}
+                        {searchResults
+                          ? "search results"
+                          : "active request has been added"}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 100]}
+              component="div"
+              count={requests.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </div>
         </Container>
 
         {/* Pop up add request */}
-        <Dialog
-          maxWidth="lg"
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <RequestAdd />
-        </Dialog>
-        <Dialog
-          open={openAddRw}
-          onClose={() => {
-            setOpenAddRw(false);
-            history.push("/");
-          }}
-        >
-          <PrizeAdd request={selectRequest} />
-        </Dialog>
-        <Dialog
-          open={openResolve}
-          onClose={() => {
-            setOpenReolve(false);
-            history.push("/");
-          }}
-        >
+        {open && (
+          <RequestAdd
+            open={open}
+            handleClose={() => {
+              setOpen(false);
+              history.push("/");
+            }}
+            prizes={prizes}
+          />
+        )}
+
+        {/* Pop up add reward */}
+        {openAddRw && (
+          <PrizeAdd
+            request={selectRequest}
+            handleClose={() => {
+              setOpenAddRw(false);
+              history.push("/");
+            }}
+            openAddRw={openAddRw}
+            prizes={prizes}
+          />
+        )}
+
+        {/* Pop up resolve */}
+        {openResolve && (
           <ResolveModal
             request={selectRequest}
             onResolve={() => setOpenReolve(false)}
+            onClose={() => {
+              setOpenReolve(false);
+              history.push("/");
+            }}
+            open={openResolve}
           />
-        </Dialog>
+        )}
       </div>
     </div>
   );

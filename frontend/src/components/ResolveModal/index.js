@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Button, IconButton, Input } from "@material-ui/core";
-import axios, {axiosImgur} from "../../hoc/axios";
+import React, { useState } from "react";
+import { Button, Dialog, Input } from "@material-ui/core";
+import axios, { axiosImgur } from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -26,7 +26,6 @@ const ResolveModal = (props) => {
       if (img) {
         props.onResolve();
         setLoading((prev) => !prev);
-        let res;
         let imgUrl;
 
         const fd = new FormData();
@@ -73,22 +72,24 @@ const ResolveModal = (props) => {
 
   return (
     <div>
-      <DialogTitle id="alert-dialog-title">
-        You need to upload an image as proof to resolve this request
-      </DialogTitle>
-      <DialogContent>
-        <img src={url} width={400} height={400} />
-        <br />
-        <Input
-          inputProps={{ type: "file" }}
-          onChange={(e) => handleUpload(e)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleResolve} color="primary" variant="contained">
-          Upload
-        </Button>
-      </DialogActions>
+      <Dialog open={props.open} onClose={props.onClose}>
+        <DialogTitle id="alert-dialog-title">
+          You need to upload an image as proof to resolve this request
+        </DialogTitle>
+        <DialogContent>
+          <img src={url} width={400} height={400} />
+          <br />
+          <Input
+            inputProps={{ type: "file" }}
+            onChange={(e) => handleUpload(e)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleResolve} color="primary" variant="contained">
+            Upload
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
