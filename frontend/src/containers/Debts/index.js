@@ -25,7 +25,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
 
-function Debts() {
+function Debts(props) {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [isComplete, setIsComplete] = useState(false);
@@ -204,6 +204,7 @@ function Debts() {
           onAdd={() => {
             setOpenAdd(false);
           }}
+          prizes={props.prizes}
         />
       </Dialog>
     </div>

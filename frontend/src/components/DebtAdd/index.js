@@ -9,6 +9,9 @@ import { useHistory } from "react-router-dom";
 import axios, { axiosImgur } from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import PrizeSelect from "../../components/PrizeSelect";
+import PersonSelect from "../../components/PersonSelect";
+import ImageUpload from "../../components/ImageUpload";
 
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
@@ -17,21 +20,13 @@ function DebtAdd(props) {
   const [{ user }, dispatch] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [users, setUsers] = useState([]);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([{ id: "", quantity: 1 }]);
   const [person, setPerson] = useState();
-  const [inputList, setInputList] = useState([{ id: "", quantity: 1 }]);
-  const [img, setImg] = useState();
+  const [img, setImg] = useState(DEFAULT_IMG);
   const [proof, setProof] = useState();
   let history = useHistory();
 
   useEffect(() => {
-    const getPrizeList = async () => {
-      const res = await axios.get("/api/prize/");
-      const items = res.data;
-
-      setItems(items);
-    };
-
     const getUsersList = async () => {
       const res = await axios.get("/api/user/users");
       const data = res.data;
@@ -46,7 +41,6 @@ function DebtAdd(props) {
       setUsers(list);
     };
 
-    getPrizeList();
     getUsersList();
   }, []);
 
@@ -54,37 +48,35 @@ function DebtAdd(props) {
     setPerson(e.target.value);
   }
 
-  function handleInputChange(e, index) {
-    const { name, value } = e.target;
-
-    if (name == "id") {
-      if (inputList.length > 1 && inputList.findIndex((val) => val.id == value) != -1) {
-        alert("Cannot select the same type of prize");
-      } else {
-        const list = [...inputList];
-        list[index][name] = value;
-        setInputList(list);
-      }
-    } else {
-      const list = [...inputList];
-      list[index][name] = value;
-      setInputList(list);
-    }
-  }
-
-  function handleRemoveInputField(index) {
-    const list = [...inputList];
-    list.splice(index, 1);
-    setInputList(list);
-  }
-
-  function handleAddInputField() {
-    if (inputList.length < items.length) {
-      setInputList([...inputList, { id: "", quantity: 1 }]);
+  const handleAddItem = () => {
+    if (items.length < props.prizes.length) {
+      setItems([...items, { id: "", quantity: 1 }]);
     } else {
       alert("Cant add more type of reward");
     }
-  }
+  };
+
+  const handleChangeItem = (item, index) => {
+    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+      alert("Cannot select the same type of prize");
+    } else {
+      const list = [...items];
+      list[index].id = item;
+      setItems(list);
+    }
+  };
+
+  const handleChangeItemNum = (quantity, index) => {
+    const list = [...items];
+    list[index].quantity = quantity;
+    setItems(list);
+  };
+
+  const handleRemoveItem = (index) => {
+    const list = [...items];
+    list.splice(index, 1);
+    setItems(list);
+  };
 
   function cancel(e) {
     history.push("/debts");
@@ -96,7 +88,7 @@ function DebtAdd(props) {
   };
 
   const handleSubmit = () => {
-    if (!person || (inputList.length == 1 && inputList[0].id == "")) {
+    if (!person || (items.length == 1 && items[0].id == "")) {
       alert("Please insert all required fields");
     } else {
       props.onAdd();
@@ -119,7 +111,7 @@ function DebtAdd(props) {
             const params = {
               ownerID: person,
               debtorID: user.userID,
-              items: [...inputList],
+              items: [...items],
               createdImage: createdImage,
             };
 
@@ -146,7 +138,7 @@ function DebtAdd(props) {
         const params = {
           ownerID: person,
           debtorID: user.userID,
-          items: [...inputList],
+          items: [...items],
         };
 
         axios
@@ -176,71 +168,28 @@ function DebtAdd(props) {
             <p>
               To: <span style={{ color: "red" }}>(Required)</span>
             </p>
-            <Select
-              id="choosePerson"
-              value={person}
-              onChange={handleChangePerson}
-              style={{ width: "20ch" }}
-            >
-              {users.map((user, index) => (
-                <MenuItem value={user["_id"]} key={index}>
-                  {user["userName"]}
-                </MenuItem>
-              ))}
-            </Select>
+            <PersonSelect
+              person={person}
+              handleChangePerson={handleChangePerson}
+              users={users}
+            />
           </div>
           <p>
             Items: <span style={{ color: "red" }}>(Required)</span>
           </p>
-          {inputList.map((item, index) => {
-            return (
-              <div>
-                <div className="favorAdd__chooseItems">
-                  <Select
-                    id="chooseItem"
-                    name="id"
-                    value={item.id}
-                    onChange={(e) => handleInputChange(e, index)}
-                  >
-                    {items.map((prize, index) => (
-                      <MenuItem value={prize["_id"]} key={index}>
-                        {prize["prize"]}
-                      </MenuItem>
-                    ))}
-                  </Select>
-
-                  <Input
-                    className="favorAdd__itemNumber"
-                    name="quantity"
-                    value={item.quantity}
-                    onChange={(e) => handleInputChange(e, index)}
-                    inputProps={{
-                      type: "number",
-                      min: 1,
-                      max: 100,
-                    }}
-                  />
-                  {inputList.length !== 1 && (
-                    <IconButton onClick={() => handleRemoveInputField(index)}>
-                      <RemoveIcon />
-                    </IconButton>
-                  )}
-                </div>
-                {inputList.length - 1 === index && (
-                  <IconButton onClick={handleAddInputField}>
-                    <AddIcon />
-                  </IconButton>
-                )}
-              </div>
-            );
-          })}
+          <PrizeSelect
+            items={items}
+            prizes={props.prizes}
+            handleChangeItem={handleChangeItem}
+            handleChangeItemNum={handleChangeItemNum}
+            handleRemoveItem={handleRemoveItem}
+            handleAddItem={handleAddItem}
+          />
         </div>
         <div className="favorAdd__right">
           <div className="favorAdd__proof">
             <p>Proof (Optional)</p>
-            <img src={img ? img : DEFAULT_IMG} width={200} height={200} />
-            <br />
-            <Input onChange={handleUpload} inputProps={{ type: "file" }} />
+            <ImageUpload url={img} onChange={handleUpload} />
           </div>
           <div className="favorAdd__buttons">
             <Button onClick={handleSubmit} color="primary" variant="contained">

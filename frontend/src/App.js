@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./containers/Login";
@@ -14,6 +14,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
 import { useUserStatus } from "./hoc/UserContext/UserContext";
 import { useLoading } from "./hoc/LoadingContext/LoadingContext";
+import axios from "./hoc/axios";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -26,6 +27,18 @@ function App() {
   const classes = useStyles();
   const [{ user }, dispatch] = useUserStatus();
   const [loading, setLoading] = useLoading();
+  const [prizes, setPrize] = useState([]);
+
+  useEffect(() => {
+    const getPrizeList = async () => {
+      const res = await axios.get("/api/prize/");
+      const prizes = res.data;
+
+      setPrize(prizes);
+    };
+
+    getPrizeList();
+  });
 
   return (
     <div className="app">
@@ -35,7 +48,7 @@ function App() {
         <div className="app__body">
           <Switch>
             <Route exact path="/">
-              <Home />
+              <Home prizes={prizes} />
             </Route>
             <Route path="/leaderboard">
               <Leaderboard />
@@ -46,11 +59,13 @@ function App() {
             <Route path="/register">
               <Register />
             </Route>
-            <Route path="/favors">{user ? <Favors /> : <Login />}</Route>
-            <Route path="/debts">{user ? <Debts /> : <Login />}</Route>
-            <Route path="/party">
-              {user ? <PartyDetection /> : <Login />}
+            <Route path="/favors">
+              {user ? <Favors prizes={prizes} /> : <Login />}
             </Route>
+            <Route path="/debts">
+              {user ? <Debts prizes={prizes} /> : <Login />}
+            </Route>
+            <Route path="/party">{user ? <PartyDetection /> : <Login />}</Route>
             <Route path="/requests">
               <Home />
             </Route>

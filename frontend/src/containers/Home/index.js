@@ -27,7 +27,7 @@ import { ACTIONS } from "../../hoc/UserContext/reducer";
 import TablePagination from "@material-ui/core/TablePagination";
 import SearchRequest from "../../components/SearchRequest";
 
-function Home() {
+function Home(props) {
   const [{ user }, dispatch] = useUserStatus();
   const [requests, setRequests] = useState([]);
   const history = useHistory();
@@ -41,7 +41,6 @@ function Home() {
   const [searchReward, setSearchReward] = useState("");
   const [searchContent, setSearchContent] = useState("");
   const [searchResults, setSearchResults] = useState();
-  const [prizes, setPrize] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -70,19 +69,11 @@ function Home() {
       }
     }
 
-    const getPrizeList = async () => {
-      const res = await axios.get("/api/prize/");
-      const prizes = res.data;
-
-      setPrize(prizes);
-    };
-
     setLoading((prev) => !prev);
     fetchData();
     if (user) {
       verifyUser();
     }
-    getPrizeList();
     setLoading((prev) => !prev);
   }, []);
 
@@ -326,7 +317,7 @@ function Home() {
               setOpen(false);
               history.push("/");
             }}
-            prizes={prizes}
+            prizes={props.prizes}
           />
         )}
 
@@ -339,7 +330,7 @@ function Home() {
               history.push("/");
             }}
             openAddRw={openAddRw}
-            prizes={prizes}
+            prizes={props.prizes}
           />
         )}
 

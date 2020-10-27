@@ -5,9 +5,10 @@ import { useHistory } from "react-router-dom";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import axios, {axiosImgur} from "../../hoc/axios";
+import axios, { axiosImgur } from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
+import ImageUpload from "../../components/ImageUpload";
 
 function ResolveDebts(props) {
   const DEFAULT_IMG =
@@ -74,12 +75,7 @@ function ResolveDebts(props) {
         Please upload an image to resolve this debt
       </DialogTitle>
       <DialogContent>
-        <img src={url} width={400} height={400} />
-        <br />
-        <Input
-          inputProps={{ type: "file" }}
-          onChange={(e) => handleUpload(e)}
-        />
+        <ImageUpload url={url} onChange={(e) => handleUpload(e)} />
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="primary" onClick={handleResolve}>

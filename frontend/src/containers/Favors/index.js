@@ -24,7 +24,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
 
-function Favors() {
+function Favors(props) {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();
@@ -224,7 +224,7 @@ function Favors() {
             onClose={handleClose}
             aria-labelledby="form-dialog-title"
           >
-            <FavorAdd onFavorAdd={() => setOpen(false)} />
+            <FavorAdd onFavorAdd={() => setOpen(false)} prizes={props.prizes} />
           </Dialog>
         </Route>
       </Container>

@@ -6,6 +6,7 @@ import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import ImageUpload from "../../components/ImageUpload";
 
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
@@ -77,12 +78,7 @@ const ResolveModal = (props) => {
           You need to upload an image as proof to resolve this request
         </DialogTitle>
         <DialogContent>
-          <img src={url} width={400} height={400} />
-          <br />
-          <Input
-            inputProps={{ type: "file" }}
-            onChange={(e) => handleUpload(e)}
-          />
+          <ImageUpload url={url} onChange={(e) => handleUpload(e)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleResolve} color="primary" variant="contained">
