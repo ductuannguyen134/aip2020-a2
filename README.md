@@ -10,11 +10,12 @@
 Frontend dev start:
 - cd frontend
 - npm start
-(if nodemon is installed, you can use nodemon server.js instead)
+
 
 Backend dev start:
 - cd backend
 - npm start
+(if nodemon is installed, you can use nodemon server.js instead)
 
 # Build:
 
