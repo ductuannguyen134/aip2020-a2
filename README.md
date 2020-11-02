@@ -5,7 +5,7 @@ An IOU application that allows users to log in, record and resolve debts, favors
 
 MongoDB, Expressjs, React/Redux, Nodejs
 
-![IOU App](https://imgur.com/CKWThDM)
+![IOU App](https://imgur.com/CKWThDM.jpg)
 
 # Contributors:
 - Duc Tuan Nguyen 
@@ -25,15 +25,15 @@ MongoDB, Expressjs, React/Redux, Nodejs
 | graph.js | bcryptjs |
 
 # Dev Start commands:
-### Frontend dev start (PORT: 3000):
+## Frontend dev start (PORT: 3000):
 ```
 - cd frontend
 - npm install
 - npm start
 ```
 
-### Backend dev start (PORT: 5000):
-##### Prepare a secret .env file to connect to MongoDB
+## Backend dev start (PORT: 5000):
+### Prepare a secret .env file to connect to MongoDB
 
 Create a .env file in the backend folder and paste the snippet below for the app to work:
 ```
@@ -41,7 +41,7 @@ DATABASE_URL=mongodb+srv://aip-iou:weareone@cluster0.pnmmr.mongodb.net/aip-iou?r
 SECRET='}]L;m7"MO"f_WD@'
 ```
 
-##### Start Backend
+### Start Backend
 ```
 - cd backend
 - npm install
