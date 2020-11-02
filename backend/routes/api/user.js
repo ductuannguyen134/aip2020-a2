@@ -8,8 +8,9 @@ const validateLoginInput = require("../../validation/login");
 const User = require("../../models/User");
 const passport = require("passport");
 
-// Signup Route
-router.post("/signup", (req, res) => {
+// Create a new user: Signup route
+router.post(
+  "/signup", (req, res) => {
   const { errors, isValid } = validateSignupInput(req.body);
   const { userName, password } = req.body;
   if (!isValid) {
@@ -56,6 +57,7 @@ router.post("/signup", (req, res) => {
   });
 });
 
+// Login route
 router.post("/login", (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
   if (!isValid) {
@@ -69,7 +71,6 @@ router.post("/login", (req, res) => {
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
         const payload = {
-          // id: user.userID,
           userName: user.userName,
         };
         jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
@@ -90,12 +91,14 @@ router.post("/login", (req, res) => {
   });
 });
 
+// Get user list
 router.get("/users", (req, res) => {
   User.find({}, "userName completedRequest").then((users) => {
     if (users.length != "undefined") return res.status(200).json(users);
   });
 });
 
+// Get status for veryfing user
 router.get(
   "/verify",
   passport.authenticate("jwt", { session: false }),
