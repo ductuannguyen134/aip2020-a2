@@ -5,7 +5,9 @@ const passport = require("passport");
 const User = require("../../models/User");
 const Favor = require("../../models/Favor");
 
-router.get("/", (req, res) => {
+// Get list of public requests
+router.get(
+  "/", (req, res) => {
   Request.find({ resolverID: null })
     .populate({ path: "requestFavors.from", select: "userName" })
     .populate({ path: "requestFavors.rewards.id", select: "prize" })
@@ -16,6 +18,7 @@ router.get("/", (req, res) => {
     .catch((err) => res.status(400).send(err));
 });
 
+// Create new request
 router.post(
   "/create",
   passport.authenticate("jwt", { session: false }),
@@ -44,6 +47,7 @@ router.post(
   }
 );
 
+// Update a specific request: add favors to existing request
 router.patch(
   "/update/:id",
   passport.authenticate("jwt", { session: false }),
@@ -71,6 +75,7 @@ router.patch(
   }
 );
 
+// Delete a specific request
 router.delete(
   "/delete/:id",
   passport.authenticate("jwt", { session: false }),
@@ -118,6 +123,7 @@ router.delete(
   }
 );
 
+// Resolve a specific request
 router.patch(
   "/resolve/:id",
   passport.authenticate("jwt", { session: false }),

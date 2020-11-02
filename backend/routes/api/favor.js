@@ -70,9 +70,10 @@ router.patch(
 );
 
 // Delete a specific favor
-router
-  .route("/delete/:id")
-  .delete(passport.authenticate("jwt", { session: false }), (req, res) => {
+router.delete(
+  "/delete/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
     Favor.deleteOne({ _id: req.params.id })
       .then(() => res.json("Item Deleted"))
       .catch((err) => res.status(400).json("Error: " + err));
