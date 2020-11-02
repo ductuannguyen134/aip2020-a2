@@ -26,6 +26,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 const Debts = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
+  const history = useHistory();
   const [debtList, setDebtList] = useState([]);
   const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
@@ -58,8 +59,6 @@ const Debts = (props) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  let history = useHistory();
 
   return (
     <div className="debts">
