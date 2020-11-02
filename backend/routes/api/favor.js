@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Favor = require("../../models/Favor");
 const passport = require("passport");
-const User = require("../../models/User");
 
 // Get all uncompleted favors
 router.get(
@@ -15,7 +14,7 @@ router.get(
       .catch((err) =>
         res
           .status(400)
-          .json({ user: "Error fetching requests of logged in user!" })
+          .json({ favor: "Error fetching favors of logged in user!" })
       );
   }
 );
@@ -33,7 +32,7 @@ router.get(
       .catch((err) =>
         res
           .status(400)
-          .json({ user: "Error fetching requests of logged in user!" })
+          .json({ favor: "Error fetching favors of logged in user!" })
       );
   }
 );

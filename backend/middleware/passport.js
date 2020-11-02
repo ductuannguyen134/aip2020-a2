@@ -18,8 +18,8 @@ module.exports = passport => {
                   return done(null, false);
                }
             })
-            .catch(err =>
-               console.log({ error: "Error authenticating the user" })
+            .catch(error =>
+               console.error({ error: "Error authenticating the user" })
             );
       })
    );

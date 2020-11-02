@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./User");
-const Prize = require("./Prize");
 const Schema = mongoose.Schema;
 
 const requestModel = {
