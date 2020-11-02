@@ -5,7 +5,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import LeaderboardComponent from "../../components/Leaderboard";
 import "./styles.css";
 
-function Leaderboard() {
+const Leaderboard = () => {
   const user = useUserStatus();
   const history = useHistory();
 

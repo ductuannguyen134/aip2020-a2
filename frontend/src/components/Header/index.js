@@ -5,12 +5,12 @@ import { Link, useHistory } from 'react-router-dom';
 import {useUserStatus} from '../../hoc/UserContext/UserContext';
 import {ACTIONS} from '../../hoc/UserContext/reducer';
 
-function Header() {
+const Header = () => {
     //retrieve user status from userContext, either logged in or not logged in
     const [{user}, dispatch] = useUserStatus();
     const history = useHistory();
 
-    function logout(){
+    const logout = () => {
         dispatch({
             type: ACTIONS.SET_USER,
             user: null

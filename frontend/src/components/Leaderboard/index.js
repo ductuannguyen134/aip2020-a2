@@ -24,13 +24,13 @@ const DEBT_COLUMNS = [
   },
 ];
 
-function Leaderboard(props) {
+const Leaderboard = (props) => {
   const [activeLists, setActiveLists] = useState();
   const [debtLists, setDebtLists] = useState([]);
   const [loading, setLoading] = useLoading();
 
   useEffect(() => {
-    async function fetchData() {
+    async const fetchData = () => {
       setLoading((prev) => !prev);
       const url = props.type == "active" ? "/api/user/users" : "/api/favor/top";
       let data;

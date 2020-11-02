@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function App() {
+const App = () => {
   const classes = useStyles();
   const [{ user }, dispatch] = useUserStatus();
   const [loading, setLoading] = useLoading();

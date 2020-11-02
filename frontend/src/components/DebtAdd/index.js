@@ -12,7 +12,7 @@ import ImageUpload from "../../components/ImageUpload";
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
-function DebtAdd(props) {
+const DebtAdd = (props) => {
   const [{ user }, dispatch] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [users, setUsers] = useState([]);
@@ -40,7 +40,7 @@ function DebtAdd(props) {
     getUsersList();
   }, []);
 
-  function handleChangePerson(e) {
+  const handleChangePerson = (e) => {
     setPerson(e.target.value);
   }
 
@@ -74,7 +74,7 @@ function DebtAdd(props) {
     setItems(list);
   };
 
-  function cancel(e) {
+  const cancel = (e) => {
     history.push("/debts");
   }
 
