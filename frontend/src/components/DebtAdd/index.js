@@ -13,7 +13,7 @@ const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
 const DebtAdd = (props) => {
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [users, setUsers] = useState([]);
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);
@@ -29,7 +29,7 @@ const DebtAdd = (props) => {
 
       //REMOVE my ID
       const myID = user.userID;
-      const idx = data.findIndex((user, index) => user["_id"] == myID);
+      const idx = data.findIndex((user, index) => user["_id"] === myID);
 
       const list = [...data];
       list.splice(idx, 1);
@@ -53,7 +53,7 @@ const DebtAdd = (props) => {
   };
 
   const handleChangeItem = (item, index) => {
-    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+    if (items.length > 1 && items.findIndex((val) => val.id === item) !== -1) {
       alert("Cannot select the same type of prize");
     } else {
       const list = [...items];
@@ -84,7 +84,7 @@ const DebtAdd = (props) => {
   };
 
   const handleSubmit = () => {
-    if (!person || (items.length == 1 && items[0].id == "")) {
+    if (!person || (items.length === 1 && items[0].id === "")) {
       alert("Please insert all required fields");
     } else {
       props.onAdd();

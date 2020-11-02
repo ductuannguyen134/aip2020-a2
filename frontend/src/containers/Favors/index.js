@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
   Container,
-  TextField,
   Button,
   ButtonGroup,
   IconButton,
   Dialog,
-  DialogTitle,
 } from "@material-ui/core";
-import { Link, Route, Redirect, useHistory } from "react-router-dom";
+import { Link, Route, useHistory } from "react-router-dom";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -27,7 +25,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 const Favors = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [favorList, setFavorList] = useState([]);
   const [open, setOpen] = useState(false);
@@ -37,14 +35,14 @@ const Favors = (props) => {
 
   // Retrieve a list of Favor for the user
   useEffect(() => {
-    async const fetchData = (userID) => {
+     const fetchData = async (userID) => {
       const response = await axios.get(`/api/favor/user/${userID}`, {
         headers: {
           Authorization: user.token,
         },
       });
       setFavorList(response.data);
-    }
+    };
     setLoading((prev) => !prev);
     fetchData(user.userID).catch((error) => {
       console.log(error);
@@ -160,6 +158,7 @@ const Favors = (props) => {
                               ? favor.createdImage
                               : DEFAULT_IMG
                           }
+                          alt={"Favor's Created Image"}
                           width={100}
                           height={100}
                         />
@@ -171,6 +170,7 @@ const Favors = (props) => {
                               ? favor.completedImage
                               : DEFAULT_IMG
                           }
+                          alt={"Favor's Completed Image"}
                           width={100}
                           height={100}
                         />

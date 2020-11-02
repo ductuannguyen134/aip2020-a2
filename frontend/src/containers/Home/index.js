@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   Container,
-  TextField,
   Button,
   ButtonGroup,
   IconButton,
-  Dialog,
 } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -43,7 +41,7 @@ const Home = (props) => {
   const [searchResults, setSearchResults] = useState();
 
   useEffect(() => {
-    async const fetchData = () => {
+    const fetchData = async () => {
       await axios
         .get("/api/request/")
         .then((response) => {
@@ -52,9 +50,9 @@ const Home = (props) => {
         .catch((error) => {
           alert(error);
         });
-    }
+    };
 
-    async const verifyUser = () => {
+    const verifyUser = async () => {
       try {
         const response = await axios.get("/api/user/verify", {
           headers: {
@@ -67,7 +65,7 @@ const Home = (props) => {
           logout();
         }
       }
-    }
+    };
 
     setLoading((prev) => !prev);
     fetchData();
@@ -94,9 +92,8 @@ const Home = (props) => {
   };
 
   const handleDeleteClick = async (id) => {
-    let res;
     try {
-      res = await axios.delete(`/api/request/delete/${id}`, {
+      const res = await axios.delete(`/api/request/delete/${id}`, {
         headers: {
           Authorization: user.token,
         },
@@ -268,7 +265,7 @@ const Home = (props) => {
                             {request.requestFavors.map((favor) => (
                               <p>
                                 {user
-                                  ? favor.from["_id"] != user.userID
+                                  ? favor.from["_id"] !== user.userID
                                     ? favor.from.userName
                                     : "You"
                                   : favor.from.userName}

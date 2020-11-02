@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./styles.css";
-import { Button, IconButton, Input, ButtonGroup } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -13,11 +13,10 @@ import ImageUpload from "../../components/ImageUpload";
 const ResolveDebts = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [url, setUrl] = useState(DEFAULT_IMG);
   const [img, setImg] = useState();
-  const history = useHistory();
 
   const handleUpload = (event) => {
     setUrl(URL.createObjectURL(event.target.files[0]));

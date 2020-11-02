@@ -1,6 +1,6 @@
 import React from "react";
-import { Container, TextField, Button, ButtonGroup } from "@material-ui/core";
-import { Link, Route, useHistory } from "react-router-dom";
+import { Container, Button, ButtonGroup } from "@material-ui/core";
+import { Route, useHistory } from "react-router-dom";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import LeaderboardComponent from "../../components/Leaderboard";
 import "./styles.css";

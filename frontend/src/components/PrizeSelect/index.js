@@ -39,7 +39,7 @@ const PrizeSelect = (props) => {
           </div>
         ))}
       </div>
-      {props.items.length == props.prizes.length ? null : (
+      {props.items.length === props.prizes.length ? null : (
         <IconButton onClick={props.handleAddItem}>
           <AddIcon />
         </IconButton>

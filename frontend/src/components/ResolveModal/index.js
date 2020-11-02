@@ -12,7 +12,7 @@ const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
 const ResolveModal = (props) => {
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [url, setUrl] = useState(DEFAULT_IMG);
   const [img, setImg] = useState();

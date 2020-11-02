@@ -6,7 +6,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import PrizeSelect from "../../components/PrizeSelect";
 
 const RequestAdd = (props) => {
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [request, setRequest] = useState();
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);
 
@@ -19,7 +19,7 @@ const RequestAdd = (props) => {
   };
 
   const handleChangeItem = (item, index) => {
-    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+    if (items.length > 1 && items.findIndex((val) => val.id === item) !== -1) {
       alert("Cannot select the same type of prize");
     } else {
       const list = [...items];
@@ -42,7 +42,7 @@ const RequestAdd = (props) => {
 
   const addRequest = async () => {
     if (user) {
-      if ((items.length == 1 && items[0].id == "") || !request) {
+      if ((items.length === 1 && items[0].id === "") || !request) {
         alert("All fields must be filled in!");
       } else {
         const request_params = {

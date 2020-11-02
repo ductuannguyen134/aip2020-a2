@@ -27,7 +27,7 @@ const FavorAdd = (props) => {
 
       //REMOVE my ID
       const myID = user.userID;
-      const idx = data.findIndex((user, index) => user["_id"] == myID);
+      const idx = data.findIndex((user, index) => user["_id"] === myID);
 
       const list = [...data];
       list.splice(idx, 1);
@@ -51,7 +51,7 @@ const FavorAdd = (props) => {
   };
 
   const handleChangeItem = (item, index) => {
-    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+    if (items.length > 1 && items.findIndex((val) => val.id === item) !== -1) {
       alert("Cannot select the same type of prize");
     } else {
       const list = [...items];
@@ -78,7 +78,7 @@ const FavorAdd = (props) => {
   };
 
   const handleSubmit = (event) => {
-    if (!person || (items.length == 1 && items[0].id == "") || !proof) {
+    if (!person || (items.length === 1 && items[0].id === "") || !proof) {
       alert("Please insert all fields");
     } else {
       props.onFavorAdd();

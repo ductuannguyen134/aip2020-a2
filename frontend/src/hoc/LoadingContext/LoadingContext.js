@@ -1,5 +1,4 @@
-import React, { useContext, createContext, useEffect, useReducer, useState } from 'react'
-import reducer, {initialState} from './reducer'
+import React, { useContext, useState } from 'react'
 
 const LoadingContext = React.createContext();
 

@@ -93,7 +93,7 @@ router.get(
   }
 );
 
-//Resolve debt
+//Get all resolved debts
 router.get("/top", (req, res) => {
   Favor.aggregate([
     {

@@ -24,15 +24,15 @@ const DEBT_COLUMNS = [
   },
 ];
 
-const Leaderboard = (props) => {
+function Leaderboard(props) {
   const [activeLists, setActiveLists] = useState();
   const [debtLists, setDebtLists] = useState([]);
   const [loading, setLoading] = useLoading();
 
   useEffect(() => {
-    async const fetchData = () => {
+    async function fetchData() {
       setLoading((prev) => !prev);
-      const url = props.type == "active" ? "/api/user/users" : "/api/favor/top";
+      const url = props.type === "active" ? "/api/user/users" : "/api/favor/top";
       let data;
       try {
         const res = await axios.get(url);
@@ -43,7 +43,7 @@ const Leaderboard = (props) => {
       }
 
       let rows;
-      if (props.type == "active") {
+      if (props.type === "active") {
         rows = data.sort((a, b) => {
           return b.completedRequest - a.completedRequest;
         });
@@ -63,12 +63,12 @@ const Leaderboard = (props) => {
   return (
     <DataTable
       title={
-        props.type == "active"
+        props.type === "active"
           ? "Most Active Users"
           : "Users with the least debts"
       }
-      columns={props.type == "active" ? ACTIVE_COLUMNS : DEBT_COLUMNS}
-      data={props.type == "active" ? activeLists : debtLists}
+      columns={props.type === "active" ? ACTIVE_COLUMNS : DEBT_COLUMNS}
+      data={props.type === "active" ? activeLists : debtLists}
       pagination={true}
       keyField="_id"
       highlightOnHover={true}

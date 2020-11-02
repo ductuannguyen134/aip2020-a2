@@ -1,10 +1,10 @@
-import { AccordionActions, Button, Container, TextField } from '@material-ui/core'
+import { Button, Container, TextField } from '@material-ui/core'
 import React, {useState} from 'react'
 import './style.css'
 import axios from '../../hoc/axios'
 import {useUserStatus} from '../../hoc/UserContext/UserContext'
 import {ACTIONS} from '../../hoc/UserContext/reducer'
-import { Redirect, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const Register = () => {
     const [message, setMessage] = useState("");
@@ -12,7 +12,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [retypedPassword, setRetypedPassword] = useState("");
     const [errorSign, setErrorSign] = useState(false);
-    const [{user},dispatch] = useUserStatus();
+    const [{user}, dispatch] = useUserStatus();
     const history = useHistory();
 
     const signUp = async () => {

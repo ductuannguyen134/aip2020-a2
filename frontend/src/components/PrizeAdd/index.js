@@ -12,7 +12,7 @@ const PrizeAdd = (props) => {
   const content = props.request.requestContent;
   const history = useHistory();
 
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);
 
   const handleAddItem = () => {
@@ -24,7 +24,7 @@ const PrizeAdd = (props) => {
   };
 
   const handleChangeItem = (item, index) => {
-    if (items.length > 1 && items.findIndex((val) => val.id == item) != -1) {
+    if (items.length > 1 && items.findIndex((val) => val.id === item) !== -1) {
       alert("Cannot select the same type of prize");
     } else {
       const list = [...items];
@@ -47,7 +47,6 @@ const PrizeAdd = (props) => {
 
   const addPrize = () => {
     if (user) {
-      let res;
       try {
         axios.patch(
           `/api/request/update/${props.request._id}`,

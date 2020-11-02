@@ -26,9 +26,8 @@ import TablePagination from "@material-ui/core/TablePagination";
 const Debts = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
-  const [isComplete, setIsComplete] = useState(false);
   const [debtList, setDebtList] = useState([]);
-  const [{ user }, dispatch] = useUserStatus();
+  const [{ user }] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [openResolve, setOpenResolve] = useState(false);
   const [selectDebt, setSelectDebt] = useState();
@@ -37,7 +36,7 @@ const Debts = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    async const fetchData = () => {
+     const fetchData = async () => {
       const response = await axios.get("/api/favor/debt", {
         headers: {
           Authorization: user.token,
@@ -45,7 +44,7 @@ const Debts = (props) => {
       });
 
       setDebtList(response.data);
-    }
+    };
     setLoading((prev) => !prev);
     fetchData();
     setLoading((prev) => !prev);
@@ -117,6 +116,7 @@ const Debts = (props) => {
                                 ? favor.createdImage
                                 : DEFAULT_IMG
                             }
+                            alt={"Debt's Created Image"}
                             width={100}
                             height={100}
                           />
@@ -128,6 +128,7 @@ const Debts = (props) => {
                                 ? favor.completedImage
                                 : DEFAULT_IMG
                             }
+                            alt={"Debt's Completed Image"}
                             width={100}
                             height={100}
                           />
