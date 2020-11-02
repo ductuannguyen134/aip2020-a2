@@ -18,6 +18,10 @@ Backend dev start:
 (if nodemon is installed, you can use nodemon server.js instead)
 
 # Build:
+- npm run build
+
+# Deploy:
+- npm run deploy
 
 # .env file details:
 Create a .env file in the backend folder and paste the snippet below for the app to work:
