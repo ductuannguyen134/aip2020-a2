@@ -6,7 +6,7 @@ import axios from '../../hoc/axios';
 import {useUserStatus} from '../../hoc/UserContext/UserContext';
 import {ACTIONS} from '../../hoc/UserContext/reducer';
 
-function Login() {
+const Login = () => {
 
     const history = useHistory();
     const [errorSign, setErrorSign] = useState(false);

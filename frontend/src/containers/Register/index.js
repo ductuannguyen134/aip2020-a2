@@ -6,7 +6,7 @@ import {useUserStatus} from '../../hoc/UserContext/UserContext'
 import {ACTIONS} from '../../hoc/UserContext/reducer'
 import { Redirect, useHistory } from 'react-router-dom'
 
-function Register() {
+const Register = () => {
     const [message, setMessage] = useState("");
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");

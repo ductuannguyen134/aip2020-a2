@@ -24,7 +24,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
 
-function Favors(props) {
+const Favors = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();
@@ -37,7 +37,7 @@ function Favors(props) {
 
   // Retrieve a list of Favor for the user
   useEffect(() => {
-    async function fetchData(userID) {
+    async const fetchData = (userID) => {
       const response = await axios.get(`/api/favor/user/${userID}`, {
         headers: {
           Authorization: user.token,
@@ -52,7 +52,7 @@ function Favors(props) {
     setLoading((prev) => !prev);
   }, []);
 
-  function handleComplete(id) {
+  const handleComplete = (id) => {
     if (window.confirm("Do you want to mark this favor as completed?")) {
       axios
         .patch(
@@ -71,11 +71,11 @@ function Favors(props) {
     }
   }
 
-  function handleAdd(favor) {
+  const handleAdd = (favor) => {
     setFavorList([...favorList, favor]);
   }
 
-  function handleDelete(id) {
+  const handleDelete = (id) => {
     if (window.confirm("Do you want to delete this favor?")) {
       axios
         .delete(`api/favor/delete/${id}`, {
@@ -90,11 +90,11 @@ function Favors(props) {
     }
   }
 
-  function handleClickOpen(e) {
+  const handleClickOpen = (e) => {
     setOpen(true);
   }
 
-  function handleClose(e) {
+  const handleClose = (e) => {
     setOpen(false);
     history.push("/favors");
   }

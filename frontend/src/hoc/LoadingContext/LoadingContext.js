@@ -3,7 +3,7 @@ import reducer, {initialState} from './reducer'
 
 const LoadingContext = React.createContext();
 
-export function LoadingProvider({children}){
+export const LoadingProvider = ({children}) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -14,7 +14,7 @@ export function LoadingProvider({children}){
     )
 }
 
-export function useLoading(){
+export const useLoading = () => {
     return useContext(LoadingContext);
 }
 

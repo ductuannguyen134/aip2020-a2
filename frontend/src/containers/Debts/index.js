@@ -23,7 +23,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
 
-function Debts(props) {
+const Debts = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [isComplete, setIsComplete] = useState(false);
@@ -37,7 +37,7 @@ function Debts(props) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    async function fetchData() {
+    async const fetchData = () => {
       const response = await axios.get("/api/favor/debt", {
         headers: {
           Authorization: user.token,

@@ -11,7 +11,7 @@ import ImageUpload from "../../components/ImageUpload";
 const DEFAULT_IMG =
   "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
 
-function FavorAdd(props) {
+const FavorAdd = (props) => {
   const [{ user }, dispatch] = useUserStatus();
   const [loading, setLoading] = useLoading();
   const [users, setUsers] = useState([]);
@@ -38,7 +38,7 @@ function FavorAdd(props) {
     getUsersList();
   }, []);
 
-  function handleChangePerson(e) {
+  const handleChangePerson = (e) => {
     setPerson(e.target.value);
   }
 
@@ -77,7 +77,7 @@ function FavorAdd(props) {
     setProof(event.target.files[0]);
   };
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     if (!person || (items.length == 1 && items[0].id == "") || !proof) {
       alert("Please insert all fields");
     } else {

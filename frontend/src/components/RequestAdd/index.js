@@ -5,7 +5,7 @@ import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import PrizeSelect from "../../components/PrizeSelect";
 
-function RequestAdd(props) {
+const RequestAdd = (props) => {
   const [{ user }, dispatch] = useUserStatus();
   const [request, setRequest] = useState();
   const [items, setItems] = useState([{ id: "", quantity: 1 }]);

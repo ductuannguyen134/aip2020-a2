@@ -10,7 +10,7 @@ import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import ImageUpload from "../../components/ImageUpload";
 
-function ResolveDebts(props) {
+const ResolveDebts = (props) => {
   const DEFAULT_IMG =
     "https://www.kenyons.com/wp-content/uploads/2017/04/default-image.jpg";
   const [{ user }, dispatch] = useUserStatus();

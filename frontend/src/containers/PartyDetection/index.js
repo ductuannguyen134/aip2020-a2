@@ -13,7 +13,7 @@ import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
 import Graph from "graph.js";
 
-function PartyDetection() {
+const PartyDetection = () => {
   const [loading, setLoading] = useLoading();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -59,7 +59,7 @@ function PartyDetection() {
 
   let parties = []; // all parties
 
-  function handleParty() {
+  const handleParty = () => {
     try {
       users.forEach((user) => graph.addVertex(user.userName));
       favors.forEach((favor) =>

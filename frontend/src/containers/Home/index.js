@@ -27,7 +27,7 @@ import { ACTIONS } from "../../hoc/UserContext/reducer";
 import TablePagination from "@material-ui/core/TablePagination";
 import SearchRequest from "../../components/SearchRequest";
 
-function Home(props) {
+const Home = (props) => {
   const [{ user }, dispatch] = useUserStatus();
   const [requests, setRequests] = useState([]);
   const history = useHistory();
@@ -43,7 +43,7 @@ function Home(props) {
   const [searchResults, setSearchResults] = useState();
 
   useEffect(() => {
-    async function fetchData() {
+    async const fetchData = () => {
       await axios
         .get("/api/request/")
         .then((response) => {
@@ -54,7 +54,7 @@ function Home(props) {
         });
     }
 
-    async function verifyUser() {
+    async const verifyUser = () => {
       try {
         const response = await axios.get("/api/user/verify", {
           headers: {
@@ -77,7 +77,7 @@ function Home(props) {
     setLoading((prev) => !prev);
   }, []);
 
-  function logout() {
+  const logout = () => {
     dispatch({
       type: ACTIONS.SET_USER,
       user: null,
