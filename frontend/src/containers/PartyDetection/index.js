@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Button, ButtonGroup } from "@material-ui/core";
-import { Link, Route, useHistory } from "react-router-dom";
+import { Container} from "@material-ui/core";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import Table from "@material-ui/core/Table";
@@ -12,12 +11,10 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
 import TablePagination from "@material-ui/core/TablePagination";
-// import "./styles.css";
 import Graph from "graph.js";
 
 function PartyDetection() {
   const [loading, setLoading] = useLoading();
-  const history = useHistory();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [users, setUsers] = useState([]);
@@ -62,29 +59,26 @@ function PartyDetection() {
 
   let parties = []; // all parties
 
-  const Party = () => {
+  function handleParty() {
     try {
       users.forEach((user) => graph.addVertex(user.userName));
       favors.forEach((favor) =>
         graph.addEdge(favor.debtorID.userName, favor.ownerID.userName)
       );
-      console.log(graph);
       for (let cycle of graph.cycles()) {
         let partyUsers = []; //all users of 1 specific party
         // Only include cycle that has more than 2 people
         if (cycle.length > 2) {
-          console.log(cycle);
           cycle.forEach((user) => {
             partyUsers.push(user);
           });
           parties.push(partyUsers);
         }
       }
-      // return parties;
     } catch (error) {}
   };
 
-  Party();
+  handleParty();
 
   return (
     <div>

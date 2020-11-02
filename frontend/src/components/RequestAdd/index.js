@@ -1,11 +1,6 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useState } from "react";
 import "./styles.css";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import { Button, IconButton, Input, Dialog } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
-import { useHistory } from "react-router-dom";
+import { Button, Dialog } from "@material-ui/core";
 import axios from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import PrizeSelect from "../../components/PrizeSelect";

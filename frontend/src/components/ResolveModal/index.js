@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Dialog, Input } from "@material-ui/core";
+import { Button, Dialog } from "@material-ui/core";
 import axios, { axiosImgur } from "../../hoc/axios";
 import { useUserStatus } from "../../hoc/UserContext/UserContext";
 import { useLoading } from "../../hoc/LoadingContext/LoadingContext";
