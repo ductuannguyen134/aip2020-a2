@@ -6,7 +6,7 @@
 - Trung Duc Nguyen
 - Duc Thinh Nguyen
 
-# Dev Start command:
+# Dev Start commands:
 Frontend dev start:
 - cd frontend
 - npm start
